@@ -1,14 +1,14 @@
 ---
-name: Poteto Mode
-description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /poteto-mode, or requests to work in this style.
+name: factory-mode
+description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /factory-mode, or requests to work in this style.
 disable-model-invocation: true
 mode: true
 icon: crown
 color: yellow
-reminder: New task? Playbook match or rigor needed -> apply /poteto-mode. Casual turn or user opts out -> don't.
+reminder: New task? Playbook match or rigor needed -> apply /factory-mode. Casual turn or user opts out -> don't.
 ---
 
-# Poteto mode
+# Factory mode
 
 ## Non-negotiables
 
@@ -88,22 +88,22 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 ## Subagents
 
-**Use `subagent_type: "poteto-agent"` for any subagent you spawn inside a playbook step** unless a role below fits better. `/poteto-mode` and `poteto-agent` route through the same wrapper. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`, `arena`, `architect`) name their own agent. Respect what the skill prescribes, don't override to `poteto-agent`.
+**Use `subagent_type: "factory-agent"` for any subagent you spawn inside a playbook step** unless a role below fits better. `/factory-mode` and `factory-agent` route through the same wrapper. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`, `arena`, `architect`) name their own agent. Respect what the skill prescribes, don't override to `factory-agent`.
 
 **Pick the agent, not the model.** Model, reasoning effort, background execution and tool restrictions live in each agent's own definition under `agents/`. Never pass a model on a `Task` call. Choose by role:
 
 | Role | Agent |
 |------|-------|
-| Standard code delegate (Feature, Bug fix, Perf issue, Hillclimb, Refactoring) | `poteto-code` |
-| Hardest changes: cross-cutting design, gnarly concurrency, subtle algorithms, or a precise sequence to execute to the letter | `poteto-hard` |
-| Read-only exploration of one angle (`how` explorers, `why` investigators) | `poteto-explorer` |
-| Prose, judgment, synthesis (`how` explainer, `why` synthesizer) | `poteto-synthesizer` |
-| Review panel seats (`interrogate`, `architect`, `arena`) | `poteto-reviewer-a`, `poteto-reviewer-b`, `poteto-reviewer-c` |
-| Parallel fan-out slices (`swarm`) | `poteto-worker` |
+| Standard code delegate (Feature, Bug fix, Perf issue, Hillclimb, Refactoring) | `factory-code` |
+| Hardest changes: cross-cutting design, gnarly concurrency, subtle algorithms, or a precise sequence to execute to the letter | `factory-hard` |
+| Read-only exploration of one angle (`how` explorers, `why` investigators) | `factory-explorer` |
+| Prose, judgment, synthesis (`how` explainer, `why` synthesizer) | `factory-synthesizer` |
+| Review panel seats (`interrogate`, `architect`, `arena`) | `factory-reviewer-a`, `factory-reviewer-b`, `factory-reviewer-c` |
+| Parallel fan-out slices (`swarm`) | `factory-worker` |
 
-Code delegates tier by difficulty. Trivial mechanical edits and ordinary scoped work go to `poteto-code`. Anything where a mistake is expensive goes to `poteto-hard`.
+Code delegates tier by difficulty. Trivial mechanical edits and ordinary scoped work go to `factory-code`. Anything where a mistake is expensive goes to `factory-hard`.
 
-Every agent already runs in the background, so don't pass a background flag. `poteto-worker` already isolates into its own worktree. Pass file pointers, not inlined context.
+Every agent already runs in the background, so don't pass a background flag. `factory-worker` already isolates into its own worktree. Pass file pointers, not inlined context.
 
 **Panel diversity is weaker here than upstream.** Every seat is an Anthropic model, so the three reviewer agents differ by model and reasoning effort rather than by vendor. Agreement across them is real but lower-signal than agreement across families. Weight a concrete reproducible defect over a consensus of opinions.
 

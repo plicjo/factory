@@ -34,15 +34,15 @@ Never pass `model`. It lives in each agent's definition under `agents/`.
 
 | Lens | Agent | Prompt template |
 |---|---|---|
-| Judgment | `poteto-reviewer-a` | `references/judgment-reviewer.md` |
-| Tooling | `poteto-reviewer-c` | `references/tooling-reviewer.md` |
-| Divergent | `poteto-reviewer-b` | `references/divergent-reviewer.md` |
+| Judgment | `factory-reviewer-a` | `references/judgment-reviewer.md` |
+| Tooling | `factory-reviewer-c` | `references/tooling-reviewer.md` |
+| Divergent | `factory-reviewer-b` | `references/divergent-reviewer.md` |
 
 Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Task` response body.
 
 ### 3. Synthesize
 
-One `Task` call, `subagent_type: poteto-synthesizer`. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
+One `Task` call, `subagent_type: factory-synthesizer`. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
 
 ### 4. Structural enforcement check
 

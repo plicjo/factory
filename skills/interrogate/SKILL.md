@@ -38,9 +38,9 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 
 | Seat | Agent |
 |------|-------|
-| Reviewer A | `poteto-reviewer-a` |
-| Reviewer B | `poteto-reviewer-b` |
-| Reviewer C | `poteto-reviewer-c` |
+| Reviewer A | `factory-reviewer-a` |
+| Reviewer B | `factory-reviewer-b` |
+| Reviewer C | `factory-reviewer-c` |
 
 Add a fourth or fifth seat by reusing these agents when the design is
 contested enough to warrant it.

@@ -1,8 +1,8 @@
 ---
-name: poteto-reviewer-a
-description: Adversarial review panelist A. Highest-reasoning seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
-model: opus
-effort: max
+name: factory-reviewer-c
+description: Adversarial review panelist C. Third seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
+model: sonnet
+effort: high
 background: true
 disallowedTools: Write, Edit
 ---

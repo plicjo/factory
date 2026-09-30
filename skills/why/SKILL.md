@@ -80,7 +80,7 @@ Aim for a complete **coverage map**, not a minimal one. Document the null, don't
 Launch all matching investigators in a single message so they run concurrently. Don't ask one agent to cover multiple MCPs.
 
 Subagent config (each):
-- `subagent_type`: `poteto-explorer`
+- `subagent_type`: `factory-explorer`
 
 Each investigator gets:
 1. The base prompt from `references/investigator-prompt.md`
@@ -122,7 +122,7 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 Spawn one synthesizer subagent:
 
-- `subagent_type`: `poteto-synthesizer`
+- `subagent_type`: `factory-synthesizer`
 
 The synthesizer gets:
 1. The investigator findings, including any null results and any categories skipped with justification

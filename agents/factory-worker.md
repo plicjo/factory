@@ -1,5 +1,5 @@
 ---
-name: poteto-worker
+name: factory-worker
 description: Swarm worker for parallel fan-out. One slice of a coverage matrix, race arm, gauntlet or exploration partition. Runs in its own worktree so parallel workers never touch each other's files.
 model: sonnet
 effort: high

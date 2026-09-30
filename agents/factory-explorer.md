@@ -1,5 +1,5 @@
 ---
-name: poteto-explorer
+name: factory-explorer
 description: Read-only codebase exploration for one assigned angle. Used by the how skill's explorers, the why skill's investigators, and any ad-hoc investigation that must not edit files.
 model: sonnet
 effort: high

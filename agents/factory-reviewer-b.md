@@ -1,5 +1,5 @@
 ---
-name: poteto-reviewer-b
+name: factory-reviewer-b
 description: Adversarial review panelist B. Second seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
 model: opus
 effort: high
