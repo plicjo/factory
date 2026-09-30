@@ -1,0 +1,7 @@
+{
+  "name": "factory",
+  "owner": { "name": "Joshua Plicque" },
+  "plugins": [
+    { "name": "factory", "source": "./", "description": "my agent workflow stack", "version": "0.1.0" }
+  ]
+}
