@@ -1,9 +1,3 @@
-NAME="factory"
-MARKET="factory"
-AUTHOR="Joshua Plicque"
-GH_USER="plicjo"
-
-cat > upstream-log.sh <<'EOF'
 #!/usr/bin/env bash
 # What has changed in upstream pstack since my snapshot.
 set -euo pipefail
@@ -20,7 +14,3 @@ fi
 git -C "$DIR" log --oneline "$BASE..origin/main" -- pstack
 echo
 echo "diff a file:  git -C $DIR diff $BASE..origin/main -- pstack/skills/<name>/SKILL.md"
-EOF
-
-chmod +x upstream-log.sh
-git add -A && git commit -m "add upstream-log.sh"
