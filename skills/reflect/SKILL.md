@@ -16,10 +16,10 @@ Invoke when the user says "reflect" or "/reflect". Skip when the conversation is
 
 ### 1. Locate the active transcript
 
-The parent finds its own transcript file before fanning out. The system prompt names the active workspace's `agent-transcripts/` directory. Use that path. Do not glob across `~/.cursor/projects/*/`. That crosses workspace boundaries and reads private chats from unrelated projects.
+The parent finds its own transcript file before fanning out. Sessions live in this project's session directory, `~/.claude/projects/<slug>/`, where `<slug>` is the repo's absolute path with every `/` turned into `-` (so `/Users/you/projects/app` becomes `-Users-you-projects-app`). Each `<uuid>.jsonl` file there is one session, one JSON object per line. Do not glob across `~/.claude/projects/*/`. That crosses project boundaries and reads private chats from unrelated projects.
 
 ```bash
-ls -t <agent-transcripts>/*.jsonl <agent-transcripts>/*/*.jsonl <agent-transcripts>/*/subagents/*.jsonl 2>/dev/null | head -10
+ls -t ~/.claude/projects/<slug>/*.jsonl 2>/dev/null | head -10
 ```
 
 Three transcript layouts: legacy flat (`<id>.jsonl`), current nested (`<id>/<id>.jsonl`), and subagent (`<parent>/subagents/<child>.jsonl`).
