@@ -33,20 +33,22 @@ Write one clear paragraph. If you're unsure about the intent, ask the user befor
 
 ## Step 3, Spawn Reviewers
 
-Launch all reviewers in a single message using the Task tool. Use the `interrogate reviewers` line in `~/.cursor/rules/pstack-models.mdc`, one reviewer per entry, extending or shrinking the Reviewer A/B/C labels below to the configured entry count. If the rule or that line is missing, use the table defaults.
+Launch all reviewers in a single message using the Task tool, one per seat.
+Never pass `model`, it lives in each agent's definition under `agents/`.
 
-| Subagent | Default model |
-|----------|---------------|
-| Reviewer A | `claude-opus-5-5-max` |
-| Reviewer B | `gpt-5.6-sol-max` |
-| Reviewer C | `grok-4.7-xhigh-fast` |
+| Seat | Agent |
+|------|-------|
+| Reviewer A | `poteto-reviewer-a` |
+| Reviewer B | `poteto-reviewer-b` |
+| Reviewer C | `poteto-reviewer-c` |
 
-For each reviewer:
-- `subagent_type`: `generalPurpose`
-- `model`: the configured `interrogate reviewers` entry, or the table default with no configured line. For an `auto` or `inherit-parent` entry, omit `model` so that reviewer runs on the parent model.
-- `readonly`: `true`
+Add a fourth or fifth seat by reusing these agents when the design is
+contested enough to warrant it.
 
-If the Task tool rejects a configured entry, run that reviewer on the table default of its family and say so. Families go by prefix: `claude-*`, `gpt-*`, and `grok-*`. With no family match, use Reviewer A's default. If it rejects a table default, check the valid slugs in the Task tool's error message, pick the closest equivalent (prefer the highest-reasoning tier of the same family), spawn with it, and open a separate PR to update the default table. Do not block the review on the slug issue. Never treat an alias entry as a rejected slug or apply either fallback to it.
+The seats differ by model and reasoning effort, not by vendor. That makes
+agreement between them weaker evidence than upstream's cross-family panel.
+Treat a concrete reproducible defect from one seat as outranking agreement
+between the other two, and say so in the verdict when the panel splits that way.
 
 Read `references/reviewer-prompt.md` and fill in the template with:
 1. The stated intent
