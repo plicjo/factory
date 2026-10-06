@@ -4,7 +4,7 @@ Invoked at the end of every other playbook.
 
 **Worktree.** Work from a git worktree off main. Subagents inherit it. Multiple `Task` calls on the same branch each get their own worktree, or `git fetch && git reset --hard origin/<branch>` between them. Dirty branch with unrelated work: patch out, fresh worktree, apply. Snarled worktree: reset from main, redo minimally.
 
-**Commits.** Commit liberally. Rebase into small, ordered commits before opening PRs. Each commit is a future PR: landable, ordered to tell the story. Amend when the fix belongs in a just-made commit. New commit when separable.
+**Commits.** One PR, one commit, one purpose. Commit freely while working, then squash to a single commit before opening the PR. Amend review fixes and follow-ups into that commit and force-push with `--force-with-lease`. Do not stack commits on an open PR. Work that would split into separable commits splits into separate PRs instead (see Size and stacks). A second commit is allowed only for a small out-of-band change the user makes or asks for, such as a quick refactor.
 
 **PRs.** Run **unslop** over the diff's prose before commit. Run `/no-comments` before review. Write every PR title, PR description, and commit body with `/technical-writing`, then apply `/unslop`. Apply every technical-writing layer except Diátaxis. Use one word for each action, keep articles, and avoid `-ing` when a plain verb works.
 
