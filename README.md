@@ -15,6 +15,10 @@ A local-path install is a symlink, so edits are live. A git-URL install is a cop
     claude plugin marketplace add plicjo/factory
     claude plugin install factory@factory
 
+Then, in each project you use factory in, run `/create-verification-skill` once. It writes
+`.claude/skills/verify-<app>/`, a project skill that teaches agents to launch and drive your app,
+so they can prove a change works on the real app instead of claiming it.
+
 ## Checking what upstream has done since
 
     ./upstream-log.sh
