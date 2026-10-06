@@ -27,7 +27,7 @@ Remaining triggers:
 - Nontrivial multi-step → write the throughput checkpoint (Feature step 3).
 - Any prose surface → the **unslop** skill. Your reply is a prose surface. Write it per **Writing the reply**. Agent-facing prose follows the same rules; a new skill is a directory under `skills/` with a `SKILL.md` whose frontmatter `name` is lowercase-hyphenated.
 - Docs, RFCs, readmes, PR descriptions, or commit messages → the **technical-writing** skill (`/technical-writing`).
-- Before commit → the **unslop** skill over the diff's prose surfaces.
+- Before commit → the **deslop** skill over the diff's code and the **unslop** skill over its prose surfaces.
 - Before review → the **no-comments** skill (`/no-comments`).
 - Shipping UI / IDE / CLI → drive the real surface yourself and capture evidence. Use the project's `verify-*` skill when one exists, otherwise generate one with **create-verification-skill**. For bug fixes, reproduce first on the same surface yourself. Hand to the user only under the narrow Bug fix step 1 exception.
 - Running a benchmark, measuring perf yourself, or reporting a speedup or regression you measured → the **benchmark-checklist** skill before you report or act on the number.
