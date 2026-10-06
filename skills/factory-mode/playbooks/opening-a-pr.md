@@ -6,7 +6,7 @@ Invoked at the end of every other playbook.
 
 **Commits.** One PR, one commit, one purpose. Commit freely while working, then squash to a single commit before opening the PR. Amend review fixes and follow-ups into that commit and force-push with `--force-with-lease`. Do not stack commits on an open PR. Work that would split into separable commits splits into separate PRs instead (see Size and stacks). A second commit is allowed only for a small out-of-band change the user makes or asks for, such as a quick refactor.
 
-**PRs.** Run **unslop** over the diff's prose before commit. Run `/no-comments` before review. Write every PR title, PR description, and commit body with `/technical-writing`, then apply `/unslop`. Apply every technical-writing layer except Diátaxis. Use one word for each action, keep articles, and avoid `-ing` when a plain verb works.
+**PRs.** Run **deslop** over the diff's code and **unslop** over its prose before commit. Run `/no-comments` before review. Write every PR title, PR description, and commit body with `/technical-writing`, then apply `/unslop`. Apply every technical-writing layer except Diátaxis. Use one word for each action, keep articles, and avoid `-ing` when a plain verb works.
 
 **Titles.** Use Conventional Commits in the form `type(scope): subject`. Use `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, or `perf` as the type. Use the changed area, such as `pstack` or `factory-mode`, as the scope. Keep the subject short and imperative. Name a real symbol when one carries the change. For example, `fix(pstack): retarget opening-a-pr babysit trigger`. Do not add a trailing period.
 
