@@ -1,6 +1,6 @@
 # Understand the code before changing it
 
-Editing code you don't understand is how subtle regressions ship. factory gives you three ways in. `/how` explains what the code does now. `/why` digs up the reasons it's shaped that way. `/teach` blends both into one explanation.
+Editing code you don't understand is how subtle regressions ship. factory gives you four ways in. `/how` explains what the code does now. `/why` digs up the reasons it's shaped that way. `/teach` blends both into one explanation. `/recall` rebuilds your own recent context on a topic.
 
 ![A detective studies a machine blueprint with a magnifying glass while robots fetch case files; the evidence board behind her links clues under /how and /why.](./images/understanding.jpg)
 
@@ -29,6 +29,14 @@ The two compose naturally. `do why first then how` is a perfectly good prompt wh
 ```
 
 [`/teach`](../../skills/teach/SKILL.md) is for when a summary isn't enough. It runs `/how` and `/why`, for a small change maybe just one of them, and weaves the findings into a plain explanation that builds up diagram by diagram. The "convince me" framing is worth stealing. It turns the explanation into an argument you can poke at instead of a tour.
+
+## Rebuild your own context with `/recall`
+
+```text
+/recall catch me up on the export work from last week
+```
+
+[`/recall`](../../skills/recall/SKILL.md) mines your own recent chats plus the shared record (issues, prior fixes, errors still firing) and hands back a brief on where things stand and what's next. Use it when you're returning to a topic cold. If you want to resume one specific chat, that's the Session pickup playbook below, not `/recall`.
 
 ## Take over prior work with Session pickup
 
