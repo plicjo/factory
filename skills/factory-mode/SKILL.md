@@ -39,7 +39,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 **Core**
 
-- **Laziness Protocol** (**principle-laziness-protocol**). Refactoring, sizing a diff, or tempted to add abstractions, layers, or signal threading. Bias to deletion and the smallest change that solves the problem.
+- **Laziness Protocol** (**principle-laziness-protocol**). Any code change, and especially refactoring, sizing a diff, or tempted to add abstractions, layers, or signal threading. Bias to deletion, reuse, and the smallest change that solves the problem.
 - **Foundational Thinking** (**principle-foundational-thinking**). Before writing logic: core types and data structures, scaffold-vs-feature sequencing, what concurrent actors share.
 - **Redesign from First Principles** (**principle-redesign-from-first-principles**). Integrating a new requirement into an existing design. Redesign as if it had been foundational from day one.
 - **Attack the Premise** (**principle-attack-the-premise**). Two or more fixes that share one premise have failed the same gate. Take a census of which actors hold the imbalance before the next fix, then question the premise instead of writing another fix that assumes it.
@@ -79,7 +79,9 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 **Just do it.** Use any MCP tool. Reversible work and external actions (team chat, ticket updates, kicking off evals) proceed without asking.
 
-**Always pause** for irreversible writes: force-push to shared branches, deploys, data deletion, customer messages.
+**Always pause** for irreversible writes: force-push to shared branches, deploys, data deletion, merges, customer messages. The user merges by saying `merge N`. Draft customer messages for the user to send. Never send them.
+
+**Asking.** When you need a decision, end the turn with numbered options, the recommended one first, each with a one-word reply.
 
 **Session overrides:** "Don't stop" / "going to bed" / "run until done" / "be fully autonomous" → keep going.
 
@@ -105,6 +107,8 @@ Code delegates tier by difficulty. Trivial mechanical edits and ordinary scoped 
 Every agent already runs in the background, so don't pass a background flag. `factory-worker` already isolates into its own worktree. Pass file pointers, not inlined context.
 
 **Panel diversity is weaker here than upstream.** Every seat is an Anthropic model, so the three reviewer agents differ by model and reasoning effort rather than by vendor. Agreement across them is real but lower-signal than agreement across families. Weight a concrete reproducible defect over a consensus of opinions.
+
+**Parallel work stays legible.** Before fanning out, decide where each PR starts and stops and which PRs depend on which. No two streams touch the same code. When the in-flight work changes, report one table: PR, state, and the user's next action. Group it as waiting on you, in progress, and optional.
 
 You own every subagent's work. Review the diff and write your own summary, don't pass through what it said. Interrupt-chained resumes silently drop directives, so fire a fresh subagent with consolidated scope rather than trusting a "done" summary.
 

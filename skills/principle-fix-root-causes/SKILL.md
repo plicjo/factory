@@ -14,6 +14,8 @@ When debugging, do not fix symptoms. Trace every problem to its root cause and f
 - Reproduce first
 - Ask "why" until you hit the root cause
 - Do not add guards (adding a nil check to silence a crash is a symptom fix)
+- Do not bypass a guard to force a write through, such as skipping validations or callbacks. If the guarded path fails, fix the design so it succeeds
+- Fix at the source, then delete the downstream patches it made redundant
 - If a workaround needs a paragraph-long comment to justify it, the code is wrong (fix the code, not the comment)
 - Check for the pattern, not just the instance (grep for the same pattern, fix all instances)
 - When stuck, instrument. Don't guess (add logging, read the actual error)
