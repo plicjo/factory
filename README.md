@@ -4,7 +4,11 @@ My agent workflow stack. Forked from [pstack](https://github.com/cursor/plugins/
 by Lauren Tan (poteto), MIT licensed, at version  (cursor/plugins@12d587d).
 Diverged since; not a mirror.
 
-Packaged as a Claude Code plugin. Grok Build reads the same format with no changes.
+Packaged as a Claude Code plugin. Grok Build (1.0.46 or later) reads the same format with no changes:
+
+    grok plugin install <path-to-this-repo>
+
+A local-path install is a symlink, so edits are live. A git-URL install is a copy; run `grok plugin update` to refresh it.
 
 ## Install
 

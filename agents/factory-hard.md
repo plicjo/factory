@@ -2,7 +2,7 @@
 name: factory-hard
 description: Hardest code changes. Cross-cutting design, gnarly concurrency, subtle algorithms, and precisely specified sequences that must be executed to the letter. Use when the change needs judgment on vague intent or when a mistake is expensive.
 model: opus
-effort: max
+effort: xhigh
 background: true
 skills: [factory-mode]
 ---
