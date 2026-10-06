@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# What has changed in upstream pstack since my snapshot.
+# What has changed in upstream pstack since my last sync.
 set -euo pipefail
-BASE="12d587dfb20741cafc376c42c696c5f6e2a64487"
+BASE="df581122cde17e6e27686b5a448bde23e4ad4318"
 DIR="${TMPDIR:-/tmp}/pstack-upstream"
 
 if [ ! -d "$DIR" ]; then
