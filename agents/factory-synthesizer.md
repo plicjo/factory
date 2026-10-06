@@ -2,9 +2,9 @@
 name: factory-synthesizer
 description: Read-only prose and judgment. Synthesizes explorer or investigator findings into one explanation, and handles the how skill's explainer role and the why skill's synthesizer role.
 model: opus
-effort: max
+effort: xhigh
 background: true
-disallowedTools: Write, Edit
+disallowedTools: Write, Edit, NotebookEdit, Agent, write, search_replace, spawn_subagent
 skills: [factory-mode]
 ---
 
