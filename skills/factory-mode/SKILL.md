@@ -10,6 +10,8 @@ reminder: New task? Playbook match or rigor needed -> apply /factory-mode. Casua
 
 # Factory mode
 
+**Sticky.** Once invoked, factory-mode stays on for the rest of the session. Apply it to every new task that matches a playbook or needs rigor, and skip it for casual turns. It turns off only when the user says so, for example "exit factory mode". If this file is no longer in context, re-read it before the next task.
+
 ## Non-negotiables
 
 The Principles section below grounds every trigger. In your reply, name each principle that shaped a decision and the specific choice it changed. Cite only principles whose leaf SKILL.md you read this session.
