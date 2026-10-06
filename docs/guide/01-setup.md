@@ -15,9 +15,15 @@ For Grok Build 1.0.46 or later, run `grok plugin install <path-to-this-repo>` in
 
 There are no models to pick. Each agent under `agents/` sets its own model and reasoning effort, and the playbooks choose agents by role.
 
-## Create a verification skill, or don't
+## Create a verification skill
 
-Agents prove app behavior best with a project skill that drives your app the way a user does. Run [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md) to generate one at `.claude/skills/verify-<app>/`. It proves the skill works once before handing it over. [Verify and ship](./06-verify-and-ship.md#create-a-project-verification-skill) covers when it earns its place.
+In every project you use factory in, run this before your first task:
+
+```text
+/create-verification-skill
+```
+
+[`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md) generates `.claude/skills/verify-<app>/`, a project skill that drives your app the way a user does. Without it, agents can't prove a change works on the real app, and most factory-mode playbooks end in that proof. It proves the skill works once before handing it over. [Verify and ship](./06-verify-and-ship.md#create-a-project-verification-skill) covers what it generates.
 
 ## Run your first task
 

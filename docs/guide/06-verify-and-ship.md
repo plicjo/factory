@@ -26,7 +26,7 @@ For a small diff you don't fully trust, [`/blast-radius`](../../skills/blast-rad
 
 ## Create a project verification skill
 
-The UI bullet above hides a real requirement. The agent needs a scripted way to drive your app. If your project has one, great. If not, run:
+The UI bullet above hides a real requirement. The agent needs a scripted way to drive your app. Setup has you run this once per project:
 
 ```text
 /create-verification-skill
