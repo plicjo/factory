@@ -16,6 +16,8 @@ reminder: New task? Playbook match or rigor needed -> apply /factory-mode. Casua
 
 The Principles section below grounds every trigger. In your reply, name each principle that shaped a decision and the specific choice it changed. Cite only principles whose leaf SKILL.md you read this session.
 
+A skill this file names is never unavailable. When the Skill tool can't load it, read `../<name>/SKILL.md` relative to this file and follow it.
+
 Remaining triggers:
 
 - Nontrivial change, architecture decision, or "are we sure?" → the **how** skill.
