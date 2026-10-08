@@ -1,7 +1,6 @@
 ---
 name: factory-mode
 description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /factory-mode, or requests to work in this style.
-disable-model-invocation: true
 mode: true
 icon: crown
 color: yellow
