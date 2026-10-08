@@ -106,6 +106,8 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 | Review panel seats (`interrogate`, `architect`, `arena`) | `factory-reviewer-a`, `factory-reviewer-b`, `factory-reviewer-c` |
 | Parallel fan-out slices (`swarm`) | `factory-worker` |
 
+**Seat A tries Fable first.** Wherever a skill spawns `factory-reviewer-a`, spawn `factory-reviewer-fable` with the same brief instead. If it fails with "requires usage credits", the account has no Fable access. Respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
+
 Code delegates tier by difficulty. Trivial mechanical edits and ordinary scoped work go to `factory-code`. Anything where a mistake is expensive goes to `factory-hard`.
 
 Every agent already runs in the background, so don't pass a background flag. `factory-worker` already isolates into its own worktree. Pass file pointers, not inlined context.
