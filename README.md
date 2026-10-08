@@ -31,6 +31,13 @@ Then, in each project you use factory in, run `/create-verification-skill` once.
 `.claude/skills/verify-<app>/`, a project skill that teaches agents to launch and drive your app,
 so they can prove a change works on the real app instead of claiming it.
 
+## Long commands run in the background
+
+A Bash call with a timeout over two minutes is refused unless it runs in the background.
+A long test suite, a CI watch, or a polling loop then no longer blocks you from talking to the agent.
+The agent is told when the command exits.
+To allow long foreground runs, start `claude` with `FACTORY_ALLOW_LONG_FOREGROUND=1`.
+
 ## Checking what upstream has done since
 
     ./upstream-log.sh
