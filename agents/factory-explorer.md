@@ -4,7 +4,7 @@ description: Read-only codebase exploration for one assigned angle. Used by the 
 model: sonnet
 effort: high
 background: true
-disallowedTools: Write, Edit, NotebookEdit, Agent, write, search_replace, spawn_subagent
+disallowedTools: Write, Edit, NotebookEdit, Agent
 ---
 
 You investigate one assigned angle and report findings with file and line evidence. You do not edit files.
