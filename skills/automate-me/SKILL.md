@@ -26,7 +26,7 @@ Update mode changes the rest of the flow:
 
 ### 1. Mine their history
 
-Locate this project's sessions before fanning out. They live in this project's session directory, `~/.claude/projects/<slug>/`, where `<slug>` is the repo's absolute path with every `/` turned into `-` (so `/Users/you/projects/app` becomes `-Users-you-projects-app`). Each `<uuid>.jsonl` file there is one session, one JSON object per line. Do not glob across `~/.claude/projects/*/`. That crosses project boundaries and reads private chats from unrelated projects. Under Grok Build, sessions live in `~/.grok/sessions/<cwd>/<session-id>/chat_history.jsonl` instead, where `<cwd>` is the repo's absolute path URL-encoded (so `/Users/you/projects/app` becomes `%2FUsers%2Fyou%2Fprojects%2Fapp`). The same no-cross-project rule applies.
+Locate this project's sessions before fanning out. They live in this project's session directory, `~/.claude/projects/<slug>/`, where `<slug>` is the repo's absolute path with every `/` turned into `-` (so `/Users/you/projects/app` becomes `-Users-you-projects-app`). Each `<uuid>.jsonl` file there is one session, one JSON object per line. Do not glob across `~/.claude/projects/*/`. That crosses project boundaries and reads private chats from unrelated projects.
 
 Survey recent agent conversations within that scope for recurring patterns. Run multiple parallel subagents across slices of history (e.g. last 2-4 weeks, split into 3 slices so each has enough material). Each slice mining subagent reads transcripts from the workspace-scoped path the parent provides, looks for the signals below, and returns a short structured list of patterns it saw with evidence pointers. Default signals worth hunting:
 

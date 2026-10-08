@@ -11,8 +11,6 @@ claude plugin marketplace add plicjo/factory
 claude plugin install factory@factory
 ```
 
-For Grok Build 1.0.46 or later, run `grok plugin install <path-to-this-repo>` instead.
-
 There are no models to pick. Each agent under `agents/` sets its own model and reasoning effort, and the playbooks choose agents by role.
 
 ## Create a verification skill
