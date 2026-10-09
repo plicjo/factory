@@ -63,18 +63,18 @@ Review seat A tries `factory-reviewer-fable` first and falls back to `factory-re
 Fable access. By default every seat is an Anthropic model, so the skills weight a concrete reproducible
 defect over panel consensus.
 
-The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright.
+The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright. With the flag set, a hook reminds any panel seat's spawn to add the Grok seat.
 
-**2 hooks.** One keeps factory-mode sticky for the session. The other moves long Bash commands
+**3 hooks.** One keeps factory-mode sticky for the session. One moves long Bash commands
 to the background: a foreground call with a timeout over two minutes is denied and the agent
-reruns it with `run_in_background`, so a long test run never locks you out of the conversation.
-`hooks/tests/run.sh` tests both.
+reruns it with `run_in_background`, so a long test run never locks you out of the conversation. The third adds the Grok seat reminder.
+`hooks/tests/run.sh` tests all three.
 
 ## CI
 
 Four jobs run on every PR and push to main:
 
-- `hooks` runs the 22 hook tests.
+- `hooks` runs the 47 hook tests.
 - `port` fails on a markdown reference to a missing file and on banned Cursor-era terms.
 - `forks` fetches upstream at the SHA pinned in `FORKS.md` and fails on an undeclared divergence.
 - `scripts` runs the watch-pr watcher's tests and typecheck under bun.

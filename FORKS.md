@@ -43,7 +43,8 @@ Files with no upstream counterpart.
 | `hooks/hooks.json` | Registers the Claude Code hooks. |
 | `hooks/factory-mode-reminder.sh` | Keeps factory-mode on for the whole session. |
 | `hooks/background-long-commands.sh` | Runs long Bash commands in the background. |
-| `hooks/tests/run.sh` | Tests both hooks. |
+| `hooks/grok-seat-reminder.sh` | Tells a panel seat's spawn to add the Grok seat when `FACTORY_GROK_SEAT=1`. |
+| `hooks/tests/run.sh` | Tests the hooks. |
 | `.github/workflows/ci.yml` | Runs the hook tests, the watch-pr tests and typecheck, and the port checks. |
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
 | `tools/check-forks.py` | Fails CI when the repo diverges from upstream without a row here. |
