@@ -18,7 +18,7 @@ fi
 
 [ -f "$marker" ] || exit 0
 
-if printf '%s' "$prompt" | grep -qiE '(exit|stop|leave|turn off|disable|end) (the )?factory[- ]mode|factory[- ]mode off'; then
+if printf '%s' "$prompt" | grep -qiE '^[[:space:]]*(please[[:space:]]+)?((exit|stop|leave|turn off|disable|end)[[:space:]]+(the[[:space:]]+)?factory[- ]mode|factory[- ]mode[[:space:]]+off)[[:space:][:punct:]]*$'; then
 	rm -f "$marker"
 	exit 0
 fi
