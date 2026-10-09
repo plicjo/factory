@@ -28,7 +28,7 @@ For each candidate, read the first JSONL line and check that `message.content[0]
 
 ### 2. Spawn three reviewers in parallel
 
-One message, three `Task` calls, one per lens, using the agent named below. Reviewers keep MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript); the read-only agents restrict `Write` and `Edit` only, so MCP tools stay available.
+One message, three `Agent` calls, one per lens, using the agent named below. Reviewers keep MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript); the read-only agents restrict `Write` and `Edit` only, so MCP tools stay available.
 
 Never pass `model`. It lives in each agent's definition under `agents/`.
 
@@ -38,11 +38,11 @@ Never pass `model`. It lives in each agent's definition under `agents/`.
 | Tooling | `factory-reviewer-c` | `references/tooling-reviewer.md` |
 | Divergent | `factory-reviewer-b` | `references/divergent-reviewer.md` |
 
-Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Task` response body.
+Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Agent` response body.
 
 ### 3. Synthesize
 
-One `Task` call, `subagent_type: factory-synthesizer`. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
+One `Agent` call, `subagent_type: factory-synthesizer`. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
 
 ### 4. Structural enforcement check
 

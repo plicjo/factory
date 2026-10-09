@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Each spawn below names the agent to use. Model, reasoning effort and tool restrictions live in that agent's definition under `agents/`. Never pass `model` on a `Task` call.
+Each spawn below names the agent to use. Model, reasoning effort and tool restrictions live in that agent's definition under `agents/`. Never pass `model` on an `Agent` call.
 
 ## Step 1. Assess Complexity
 
@@ -29,7 +29,7 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
 
 ## Step 2b. Direct Explain (simple questions)
 
-Spawn one Task subagent that explores and explains in one pass:
+Spawn one subagent that explores and explains in one pass:
 
 - `subagent_type`: `factory-synthesizer`
 
@@ -37,7 +37,7 @@ Build its prompt from `references/explainer-prompt.md` without the explorer-find
 
 ## Step 3. Synthesize (complex questions only)
 
-Once all explorers have returned, spawn one Task subagent to synthesize their findings into one explanation:
+Once all explorers have returned, spawn one subagent to synthesize their findings into one explanation:
 
 - `subagent_type`: `factory-synthesizer`
 

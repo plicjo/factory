@@ -90,7 +90,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 **Use `subagent_type: "factory-agent"` for any subagent you spawn inside a playbook step** unless a role below fits better. `/factory-mode` and `factory-agent` route through the same wrapper. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`, `arena`, `architect`) name their own agent. Respect what the skill prescribes, don't override to `factory-agent`.
 
-**Pick the agent, not the model.** Model, reasoning effort, background execution and tool restrictions live in each agent's own definition under `agents/`. Never pass a model on a `Task` call. Choose by role:
+**Pick the agent, not the model.** Model, reasoning effort, background execution and tool restrictions live in each agent's own definition under `agents/`. Never pass a model on an `Agent` call. Choose by role:
 
 | Role | Agent |
 |------|-------|
