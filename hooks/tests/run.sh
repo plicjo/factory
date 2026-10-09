@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs the plugin hooks against the JSON shapes Claude Code sends and checks
+# Runs the plugin hooks and the Grok review script against the JSON shapes Claude Code sends and checks
 # marker state and output. Usage: sh hooks/tests/run.sh
 set -u
 
@@ -154,6 +154,47 @@ fi
 
 out=$(seatctx 1 "$(agentcall factory-code 'review with \"subagent_type\": \"factory-reviewer-a\"')")
 if [ -z "$out" ]; then ok 'grok flag on: an escaped subagent_type in the prompt does not fool the extraction'; else ko 'grok flag on: an escaped subagent_type in the prompt does not fool the extraction'; fi
+
+fakebin="$T/fakebin"
+mkdir -p "$fakebin"
+printf 'brief' >"$T/brief"
+fakegrok() {
+	{
+		printf '#!/bin/sh\nprev=""\nfor a in "$@"; do\n'
+		printf '\t[ "$prev" = --prompt-file ] && cp "$a" "%s"\n' "$T/sent"
+		printf '\t[ "$prev" = --max-turns ] && printf %%s "$a" >"%s"\n\tprev=$a\ndone\n' "$T/turns"
+		printf 'cat <<'"'"'EOF'"'"'\n%s\nEOF\n' "$1"
+	} >"$fakebin/grok"
+	chmod +x "$fakebin/grok"
+}
+grokreview() { PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" 2>"$T/err"; }
+
+fakegrok '{"type":"text","data":"## Findings\n"}
+{"type":"text","data":"none"}
+{"type":"end","stopReason":"end_turn"}'
+out=$(grokreview); code=$?
+if [ "$code" -eq 0 ] && printf '%s' "$out" | grep -q 'none'; then ok 'grok review relays the reply on end_turn'; else ko 'grok review relays the reply on end_turn'; fi
+
+if [ "$(cat "$T/turns")" = 60 ] && grep -q 'starts with VERDICT:' "$T/sent" && grep -q '^brief$' "$T/sent"; then
+	ok 'grok review caps at 60 turns and sends the verdict instruction ahead of the brief'
+else
+	ko 'grok review caps at 60 turns and sends the verdict instruction ahead of the brief'
+fi
+
+fakegrok '{"type":"text","data":"I will review"}
+{"type":"tool_call","toolCallId":"c1","rawInput":{"command":"python --version"}}
+{"type":"tool_call_update","toolCallId":"c1","status":"failed","content":[{"type":"content","content":{"type":"text","text":"User cancelled"}}]}
+{"type":"end","stopReason":"cancelled"}'
+out=$(grokreview); code=$?
+if [ "$code" -eq 5 ] && [ -z "$out" ] && grep -q 'stopReason cancelled.*python --version' "$T/err"; then
+	ok 'grok review exits 5 and names the failed call on a cancelled session'
+else
+	ko 'grok review exits 5 and names the failed call on a cancelled session'
+fi
+
+fakegrok '{"type":"text","data":"partial"}'
+out=$(grokreview); code=$?
+if [ "$code" -eq 5 ]; then ok 'grok review exits 5 when the stream has no end event'; else ko 'grok review exits 5 when the stream has no end event'; fi
 
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
