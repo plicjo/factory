@@ -33,7 +33,7 @@ Write one clear paragraph. If you're unsure about the intent, ask the user befor
 
 ## Step 3, Spawn Reviewers
 
-Launch all reviewers in a single message using the Task tool, one per seat.
+Launch all reviewers in a single message using the Agent tool, one per seat.
 Never pass `model`, it lives in each agent's definition under `agents/`.
 
 | Seat | Agent |

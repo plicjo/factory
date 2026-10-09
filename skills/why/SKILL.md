@@ -10,7 +10,7 @@ Investigate the motivation and intent behind code.
 
 Companion to the `how` skill. `how` answers what the code does and how it works. `why` answers what forces led to its shape.
 
-Each spawn below names the agent to use. Model, reasoning effort and tool restrictions live in that agent's definition under `agents/`. Never pass `model` on a `Task` call.
+Each spawn below names the agent to use. Model, reasoning effort and tool restrictions live in that agent's definition under `agents/`. Never pass `model` on an `Agent` call.
 
 ## Operating Posture
 

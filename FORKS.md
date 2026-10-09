@@ -83,4 +83,5 @@ Ported files with content changes beyond the name substitutions.
 | `skills/factory-mode/scripts/package.json`, `bun.lock` | The package is `factory-mode-tools` and the test script drops `orch`. |
 | `skills/recall/SKILL.md`, `skills/show-me-your-work/SKILL.md` | Read Claude Code sessions, and `recall` fans out to `factory-explorer`. |
 | `skills/automate-me/SKILL.md` | Claude paths, `AskUserQuestion`, and the authoring playbook instead of `create-skill`. |
+| `skills/no-comments/SKILL.md` | Spawns `factory:comment-sicko` through the `Agent` tool. |
 | `skills/create-verification-skill/SKILL.md`, `skills/maintain-verification-skill/SKILL.md` | Verify skills live under `.claude/skills/`. |
