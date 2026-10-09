@@ -7,6 +7,7 @@ This file records every intentional divergence from upstream pstack.
 - The compared snapshot is `ccb5507cec1546dc88135c1139c811e6c59115ba`, the upstream head when this file was written.
 - A file absent from the tables below matches upstream apart from the name substitutions. `poteto-mode` is `factory-mode`, `poteto-agent` is `factory-agent`, and prose says factory instead of poteto.
 - The `deslop` skill is vendored from cursor-team-kit, not pstack. Its license is in `LICENSE-cursor-team-kit`.
+- A PR that changes a ported file, or adds or drops one, updates its row here. The `forks` CI job runs `tools/check-forks.py` and fails on an undeclared divergence. After a sync, bump the snapshot SHA above and rerun it.
 
 ## Dropped
 
@@ -19,6 +20,7 @@ Upstream files not ported. Paths are upstream paths.
 | `skills/poteto-help/` | Onboarding help for pstack. The guide covers setup here. |
 | `skills/setup-pstack/` | Wrote a Cursor model rule. Models now live in each agent definition under `agents/`. |
 | `skills/poteto-mode/playbooks/orchestrate.md` | Coordinator playbook built on Cursor cloud agents and the Cursor dashboard, with 2,819 lines of `orch` store tooling. Autopilot-full, autopilot-stack and multi-phase-plan cover that scale here. Port from upstream head if a program-scale need appears. |
+| `skills/poteto-mode/scripts/orch/` | The orchestrate playbook's store tooling. Dropped with it. |
 
 ## Added
 
@@ -42,6 +44,7 @@ Files with no upstream counterpart.
 | `hooks/tests/run.sh` | Tests both hooks. |
 | `.github/workflows/ci.yml` | Runs the hook tests, the watch-pr tests and typecheck, and the port checks. |
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
+| `tools/check-forks.py` | Fails CI when the repo diverges from upstream without a row here. |
 | `upstream-log.sh` | Lists upstream commits since the sync base. |
 | `skills/deslop/SKILL.md` | Vendored from cursor-team-kit. Upstream pstack points at that plugin instead. |
 | `LICENSE-cursor-team-kit` | MIT license for the vendored `deslop` skill. |
@@ -77,6 +80,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/factory-mode/playbooks/eval.md`, `session-pickup.md` | Reads Claude Code sessions under `~/.claude/projects/`. |
 | `skills/factory-mode/references/bugbot-triage.md` | Names the review bot generically instead of Bugbot. |
 | `skills/factory-mode/scripts/worktree-audit.sh` | Finds sessions under `~/.claude/projects/`. |
+| `skills/factory-mode/scripts/package.json`, `bun.lock` | The package is `factory-mode-tools` and the test script drops `orch`. |
 | `skills/recall/SKILL.md`, `skills/show-me-your-work/SKILL.md` | Read Claude Code sessions, and `recall` fans out to `factory-explorer`. |
 | `skills/automate-me/SKILL.md` | Claude paths, `AskUserQuestion`, and the authoring playbook instead of `create-skill`. |
 | `skills/create-verification-skill/SKILL.md`, `skills/maintain-verification-skill/SKILL.md` | Verify skills live under `.claude/skills/`. |
