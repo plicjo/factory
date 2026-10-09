@@ -14,3 +14,4 @@ fi
 git -C "$DIR" log --oneline "$BASE..origin/main" -- pstack
 echo
 echo "diff a file:  git -C $DIR diff $BASE..origin/main -- pstack/skills/<name>/SKILL.md"
+echo "after syncing, reconcile FORKS.md (bump its snapshot SHA, then):  python3 tools/check-forks.py"
