@@ -19,6 +19,7 @@ Upstream files not ported. Paths are upstream paths.
 | `automations/benny/` | Cursor automations for Slack issue reports. Nothing here runs them. |
 | `skills/poteto-help/` | Onboarding help for pstack. The guide covers setup here. |
 | `skills/setup-pstack/` | Wrote a Cursor model rule. Models now live in each agent definition under `agents/`. |
+| `skills/make-bot-ui/` | Builds UIs for Cursor's automation webhook and Grok Bot, which Claude Code cannot run. |
 | `skills/poteto-mode/playbooks/orchestrate.md` | Coordinator playbook built on Cursor cloud agents and the Cursor dashboard, with 2,819 lines of `orch` store tooling. Autopilot-full, autopilot-stack and multi-phase-plan cover that scale here. Port from upstream head if a program-scale need appears. |
 | `skills/poteto-mode/scripts/orch/` | The orchestrate playbook's store tooling. Dropped with it. |
 
@@ -61,7 +62,6 @@ Ported files with content changes beyond the name substitutions.
 | `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents and the Fable seat. Drops the Orchestrate playbook and the Cursor-only triggers. |
 | `agents/factory-agent.md` | Claude frontmatter for background, model, effort and the preloaded skill. |
 | `agents/comment-sicko.md` | Name lowercased to match Claude agent naming. |
-| `skills/make-bot-ui/SKILL.md` | Name lowercased to match the skill directory. |
 | `skills/principle-*/SKILL.md` (all 24) | `user-invocable: false` hides them from the slash menu. |
 | `skills/principle-laziness-protocol/SKILL.md` | Adds the reuse rule and widens the trigger to any code change. |
 | `skills/principle-fix-root-causes/SKILL.md` | Adds two bullets on guards and downstream patches. |
