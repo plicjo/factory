@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs both plugin hooks against the JSON shapes Claude Code sends and checks
+# Runs the plugin hooks against the JSON shapes Claude Code sends and checks
 # marker state and output. Usage: sh hooks/tests/run.sh
 set -u
 
@@ -115,6 +115,45 @@ if denies "$out"; then ok 'denies when only the command text names run_in_backgr
 out=$(printf '%s' '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"sleep 300","timeout":200000}}' |
 	FACTORY_ALLOW_LONG_FOREGROUND=1 bash "$H/background-long-commands.sh")
 if [ -z "$out" ]; then ok 'allows with FACTORY_ALLOW_LONG_FOREGROUND=1'; else ko 'allows with FACTORY_ALLOW_LONG_FOREGROUND=1'; fi
+
+seatctx() { printf '%s' "$2" | FACTORY_GROK_SEAT="$1" bash "$H/grok-seat-reminder.sh"; }
+agentcall() { printf '{"session_id":"s1","tool_name":"Agent","tool_input":{"description":"review","prompt":"%s","subagent_type":"%s"}}' "$2" "$1"; }
+
+for seat in factory-reviewer-a factory-reviewer-b factory-reviewer-c factory-reviewer-fable; do
+	for name in "$seat" "factory:$seat"; do
+		out=$(seatctx 1 "$(agentcall "$name" 'review this')")
+		if printf '%s' "$out" | grep -q '"hookEventName":"PreToolUse"' &&
+			printf '%s' "$out" | grep -q '"additionalContext":".*factory-reviewer-grok' &&
+			! printf '%s' "$out" | grep -q 'permissionDecision'; then
+			ok "grok flag on, $name: adds the seat reminder"
+		else
+			ko "grok flag on, $name: adds the seat reminder"
+		fi
+	done
+done
+
+for name in factory-code factory:factory-code factory-reviewer-grok factory:factory-reviewer-grok general-purpose; do
+	out=$(seatctx 1 "$(agentcall "$name" 'review this')")
+	if [ -z "$out" ]; then ok "grok flag on, $name: stays quiet"; else ko "grok flag on, $name: stays quiet"; fi
+done
+
+for flag in '' 0 true yes 11; do
+	out=$(seatctx "$flag" "$(agentcall factory-reviewer-b 'review this')")
+	if [ -z "$out" ]; then ok "grok flag '$flag': stays quiet"; else ko "grok flag '$flag': stays quiet"; fi
+done
+
+out=$(printf '%s' "$(agentcall factory-reviewer-b 'review this')" | env -u FACTORY_GROK_SEAT bash "$H/grok-seat-reminder.sh")
+if [ -z "$out" ]; then ok 'grok flag unset: stays quiet'; else ko 'grok flag unset: stays quiet'; fi
+
+out=$(seatctx 1 "$(agentcall factory-reviewer-c 'he said \"ship it\" and \"subagent_type\": \"factory-code\"')")
+if printf '%s' "$out" | grep -q 'factory-reviewer-grok'; then
+	ok 'grok flag on: escaped quotes in the prompt still add the reminder'
+else
+	ko 'grok flag on: escaped quotes in the prompt still add the reminder'
+fi
+
+out=$(seatctx 1 "$(agentcall factory-code 'review with \"subagent_type\": \"factory-reviewer-a\"')")
+if [ -z "$out" ]; then ok 'grok flag on: an escaped subagent_type in the prompt does not fool the extraction'; else ko 'grok flag on: an escaped subagent_type in the prompt does not fool the extraction'; fi
 
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
