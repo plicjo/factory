@@ -20,7 +20,7 @@ jobs:
         run: python3 tools/check-references.py
       - name: no Cursor leftovers
         run: |
-          ! grep -rn -E 'control-(ui|cli)|create-skill|Cursor cloud agent|~/\.cursor|mcps/' skills/ docs/ --include='*.md'
+          ! grep -rn -E 'control-(ui|cli)|create-skill|Cursor cloud agent|~/\.cursor|mcps/|[Bb]ugbot($|[^-])' skills/ docs/ --include='*.md'
 
   forks:
     runs-on: ubuntu-latest
