@@ -42,6 +42,8 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 | Reviewer B | `factory-reviewer-b` |
 | Reviewer C | `factory-reviewer-c` |
 
+**Seat A tries Fable first.** Spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
+
 Add a fourth or fifth seat by reusing these agents when the design is
 contested enough to warrant it.
 
