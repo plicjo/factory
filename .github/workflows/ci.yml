@@ -11,3 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - run: sh hooks/tests/run.sh
+
+  scripts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/factory-mode/scripts
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun test watch-pr
+      - run: bun run typecheck

@@ -1,6 +1,6 @@
 ### Babysit
 
-**You own the merge frontier. Declare a mode, clear one PR at a time, stop where the human's call begins.** This playbook replaces Cursor's built-in babysit skill for these requests, so do not route there even though its description matches the same words. A request to land or ship is `playbooks/shipping.md`, which begins where this playbook ends.
+**You own the merge frontier. Declare a mode, clear one PR at a time, stop where the human's call begins.** A request to land or ship is `playbooks/shipping.md`, which begins where this playbook ends.
 
 Babysitting starts when the user asks for it, which is normally once a phase or a whole stack is built, not when a PR opens. Finish the stack, get it green here, then land it through Shipping.
 
@@ -19,7 +19,7 @@ Babysitting starts when the user asks for it, which is normally once a phase or 
 
    Answer a user question mid-loop and continue. Only an explicit stop ends the loop before the active forge's stop condition. On GitHub, that is `READY` in single or stack mode, or a `WAITING`/`merge-queue` report or `COMPLETE` in queued mode. On Origin, that is the merge-ready state defined above. For a GitHub queued stack, capture the PR list bottom-to-top once and pass the same frozen list to every rearm. Revise the list only for the sanctioned follow-up PR from step 4. Append it at the end, drop the merged owner, and rearm with the corrected snapshot.
 7. **Classify CI before any retrigger.** Flake or infrastructure earns one fresh build, never a job retry. One retry only. An identical second failure means it was never flake, so reclassify and read the child logs instead of retrying blind. A failure in code the diff never touches means a stale base, so check with `git merge-base --is-ancestor` before assuming flake. Report a stale base as needing a rebase instead of burning retries. Only a failure in the diff's own code gets a commit.
-9. **Stop at the human's line.** Owner approval is a wait, not a blocker to fix. Babysitting never authorizes merging. Only an explicit request to merge, land, ship, or merge when ready does. Route that request to Shipping. Surface the escalation and keep working the rest. After GitHub reports `READY`, a queued `WAITING`/`merge-queue` stop, or `COMPLETE`, or after Origin reports the frontier merge-ready, sweep the run's triage decisions once. Offer any team-useful dismissal pattern as a candidate entry in the shared rubric (`../references/bugbot-triage.md`) and its own PR. Never keep it only in private memory.
+8. **Stop at the human's line.** Owner approval is a wait, not a blocker to fix. Babysitting never authorizes merging. Only an explicit request to merge, land, ship, or merge when ready does. Route that request to Shipping. Surface the escalation and keep working the rest. After GitHub reports `READY`, a queued `WAITING`/`merge-queue` stop, or `COMPLETE`, or after Origin reports the frontier merge-ready, sweep the run's triage decisions once. Offer any team-useful dismissal pattern as a candidate entry in the shared rubric (`../references/bugbot-triage.md`) and its own PR. Never keep it only in private memory.
 
 `drive` ends at merge-ready. Landing the stack is `playbooks/shipping.md`.
 
