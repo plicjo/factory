@@ -48,7 +48,7 @@ Files with no upstream counterpart.
 | `.github/workflows/ci.yml` | Runs the hook tests, the watch-pr tests and typecheck, and the port checks. |
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
 | `tools/check-forks.py` | Fails CI when the repo diverges from upstream without a row here. |
-| `tools/grok-review.sh` | Gates the opt-in Grok seat on `FACTORY_GROK_SEAT=1` and runs the `grok` CLI read-only. |
+| `tools/grok-review.sh` | Gates the opt-in Grok seat on `FACTORY_GROK_SEAT=1`, runs the `grok` CLI read-only, and exits nonzero when the session did not finish. |
 | `upstream-log.sh` | Lists upstream commits since the sync base. |
 | `skills/deslop/SKILL.md` | Vendored from cursor-team-kit. Upstream pstack points at that plugin instead. |
 | `LICENSE-cursor-team-kit` | MIT license for the vendored `deslop` skill. |

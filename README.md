@@ -74,7 +74,7 @@ reruns it with `run_in_background`, so a long test run never locks you out of th
 
 Four jobs run on every PR and push to main:
 
-- `hooks` runs the 47 hook tests.
+- `hooks` runs the 51 hook tests.
 - `port` fails on a markdown reference to a missing file and on banned Cursor-era terms.
 - `forks` fetches upstream at the SHA pinned in `FORKS.md` and fails on an undeclared divergence.
 - `scripts` runs the watch-pr watcher's tests and typecheck under bun.
