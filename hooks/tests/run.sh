@@ -55,6 +55,31 @@ for p in "don't exit factory mode" 'do not stop factory mode' 'what happens if I
 	fi
 done
 
+# Prompts carrying JSON-escaped quotes must not break the sed extraction.
+arm
+out=$(reminder 'he said \"ship it\" and moved on')
+if [ -f "$marker" ] && printf '%s' "$out" | grep -q 'additionalContext'; then
+	ok 'stays armed on escaped quotes in the prompt'
+else
+	ko 'stays armed on escaped quotes in the prompt'
+fi
+
+arm
+out=$(reminder '\"exit factory mode\"')
+if [ -f "$marker" ] && printf '%s' "$out" | grep -q 'additionalContext'; then
+	ok 'a quoted exit phrase is a mention, not a command'
+else
+	ko 'a quoted exit phrase is a mention, not a command'
+fi
+
+arm
+out=$(reminder 'the json has \"prompt\": \"exit factory mode\" inside')
+if [ -f "$marker" ] && printf '%s' "$out" | grep -q 'additionalContext'; then
+	ok 'an escaped prompt key inside the text does not fool the extraction'
+else
+	ko 'an escaped prompt key inside the text does not fool the extraction'
+fi
+
 # Without a marker, an ordinary prompt produces nothing.
 disarm
 out=$(reminder 'hello there')
@@ -65,6 +90,9 @@ denies() { printf '%s' "$1" | grep -q '"permissionDecision":"deny"'; }
 
 out=$(longcmd '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"sleep 300","timeout":200000}}')
 if denies "$out"; then ok 'denies timeout 200000 in the foreground'; else ko 'denies timeout 200000 in the foreground'; fi
+
+out=$(longcmd '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"echo \"done\" && sleep 300","timeout":200000}}')
+if denies "$out"; then ok 'denies with escaped quotes in the command text'; else ko 'denies with escaped quotes in the command text'; fi
 
 out=$(longcmd '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"sleep 300","timeout":200000,"run_in_background":true}}')
 if [ -z "$out" ]; then ok 'allows timeout 200000 in the background'; else ko 'allows timeout 200000 in the background'; fi
