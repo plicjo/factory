@@ -12,6 +12,16 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - run: sh hooks/tests/run.sh
 
+  port:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: references resolve
+        run: python3 tools/check-references.py
+      - name: no Cursor leftovers
+        run: |
+          ! grep -rn -E 'control-(ui|cli)|create-skill|Cursor cloud agent|~/\.cursor|mcps/' skills/ docs/ --include='*.md'
+
   scripts:
     runs-on: ubuntu-latest
     defaults:
