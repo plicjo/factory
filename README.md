@@ -43,7 +43,7 @@ so they can prove a change works on the real app instead of claiming it.
 `/arena`, `/interrogate`, `/swarm`, `/tdd`, `/unslop` and `/deslop`, plus 24 principle skills
 that factory-mode reads by path and cites in replies. The principles stay out of the slash menu.
 
-**11 agents.** Each agent file pins its model, reasoning effort, tool limits and isolation, so a
+**12 agents.** Each agent file pins its model, reasoning effort, tool limits and isolation, so a
 playbook picks a role and never passes a model.
 
 | Agent | Role | Model and effort |
@@ -55,12 +55,15 @@ playbook picks a role and never passes a model.
 | `factory-synthesizer` | Read-only prose and judgment | Opus, max |
 | `factory-reviewer-a` / `-b` / `-c` | Review panel seats | Opus max, Opus high, Sonnet high |
 | `factory-reviewer-fable` | Seat A on accounts with Fable access | Fable, max |
+| `factory-reviewer-grok` | Opt-in cross-family seat via the local grok CLI | Haiku transport, Grok 4.7 does the reviewing |
 | `factory-worker` | Swarm worker, isolated in its own git worktree | Sonnet, high |
 | `comment-sicko` | Comment reviewer for `/no-comments` | inherits |
 
 Review seat A tries `factory-reviewer-fable` first and falls back to `factory-reviewer-a` without
-Fable access. Every seat is an Anthropic model, so the skills weight a concrete reproducible
+Fable access. By default every seat is an Anthropic model, so the skills weight a concrete reproducible
 defect over panel consensus.
+
+The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright.
 
 **2 hooks.** One keeps factory-mode sticky for the session. The other moves long Bash commands
 to the background: a foreground call with a timeout over two minutes is denied and the agent

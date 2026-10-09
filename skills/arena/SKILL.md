@@ -38,7 +38,7 @@ If a candidate fails to produce output, proceed with N-1 and note the dropout in
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, spawn one judge on `factory-reviewer-a`, or on `factory-reviewer-c` when the parent is already running the same model as seat A. A judge on seat A follows the same Fable-first rule as the runners. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
+After all Phase B candidates complete, spawn one judge. When the environment sets `FACTORY_GROK_SEAT=1`, spawn it on `factory-reviewer-grok` so the judge sits outside the model family that produced every candidate. Runners stay Anthropic because they write code and the Grok seat is read-only. If the seat reports itself unavailable, fall back to the rule below. Otherwise spawn the judge on `factory-reviewer-a`, or on `factory-reviewer-c` when the parent is already running the same model as seat A. A judge on seat A follows the same Fable-first rule as the runners. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
 
 ## Phase D: Pick a base
 

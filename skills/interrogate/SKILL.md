@@ -44,10 +44,12 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 
 **Seat A tries Fable first.** Spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
 
+**Grok seat (opt-in).** When the environment sets `FACTORY_GROK_SEAT=1`, add seat D on `factory-reviewer-grok`. It relays the same filled brief to the local `grok` CLI in headless mode through `tools/grok-review.sh` and is read-only. If the seat reports the CLI missing or unauthenticated, continue with the Anthropic seats and name the absence in the verdict. Agreement between the Grok seat and any Anthropic seat is cross-family agreement. Weight it above agreement among the Anthropic seats.
+
 Add a fourth or fifth seat by reusing these agents when the design is
 contested enough to warrant it.
 
-The seats differ by model and reasoning effort, not by vendor. That makes
+Unless the Grok seat is active, the seats differ by model and reasoning effort, not by vendor. That makes
 agreement between them weaker evidence than upstream's cross-family panel.
 Treat a concrete reproducible defect from one seat as outranking agreement
 between the other two, and say so in the verdict when the panel splits that way.
@@ -65,7 +67,7 @@ The same filled template goes to all reviewers, so every model applies the code-
 As results come back, build a unified picture:
 
 1. **Parse all findings** from the reviewers
-2. **Identify consensus**. Findings raised by 2+ models independently are highest signal.
+2. **Identify consensus**. Findings raised by 2+ models independently are highest signal. Agreement between the Grok seat and any Anthropic seat is cross-family and the highest-signal consensus.
 3. **Identify lone-model findings**. Still worth reading, but weight accordingly.
 4. **Deduplicate**. Different models may describe the same issue differently. Merge these and note which models raised it.
 5. **Note disagreements**. If one model flags something and another explicitly says the opposite, that's useful context for the verdict.
