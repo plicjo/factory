@@ -1,7 +1,7 @@
 {
   "name": "factory",
   "description": "my agent workflow stack",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": { "name": "Joshua Plicque" },
   "homepage": "https://github.com/plicjo/factory",
   "license": "MIT"

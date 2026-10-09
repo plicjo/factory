@@ -3,6 +3,6 @@
   "description": "Joshua Plicque's agent workflow stack, forked from pstack",
   "owner": { "name": "Joshua Plicque" },
   "plugins": [
-    { "name": "factory", "source": "./", "description": "my agent workflow stack", "version": "0.2.0" }
+    { "name": "factory", "source": "./", "description": "my agent workflow stack", "version": "0.3.0" }
   ]
 }
