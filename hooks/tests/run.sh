@@ -160,7 +160,7 @@ mkdir -p "$fakebin"
 printf 'brief' >"$T/brief"
 fakegrok() {
 	{
-		printf '#!/bin/sh\nprev=""\nfor a in "$@"; do\n'
+		printf '#!/bin/sh\nprintf "%%s\\n" "$@" >"%s"\nprev=""\nfor a in "$@"; do\n' "$T/argv"
 		printf '\t[ "$prev" = --prompt-file ] && cp "$a" "%s"\n' "$T/sent"
 		printf '\t[ "$prev" = --max-turns ] && printf %%s "$a" >"%s"\n\tprev=$a\ndone\n' "$T/turns"
 		printf 'cat <<'"'"'EOF'"'"'\n%s\nEOF\n' "$1"
@@ -190,6 +190,19 @@ if [ "$code" -eq 5 ] && [ -z "$out" ] && grep -q 'stopReason cancelled.*python -
 	ok 'grok review exits 5 and names the failed call on a cancelled session'
 else
 	ko 'grok review exits 5 and names the failed call on a cancelled session'
+fi
+
+fakegrok '{"type":"end","stopReason":"end_turn"}'
+grokreview >/dev/null
+if grep -qx 'Write' "$T/argv" || grep -qx 'Edit' "$T/argv"; then
+	ko 'grok review denies no tool by name, since that cancels piped rg'
+else
+	ok 'grok review denies no tool by name, since that cancels piped rg'
+fi
+if grep -Fqx 'Bash(touch *)' "$T/argv" && grep -Fqx 'Bash(*>*)' "$T/argv" && grep -Fqx 'Bash(rg *)' "$T/argv" && grep -q 'Join them with a pipe' "$T/sent"; then
+	ok 'grok review denies shell writes and allows pipes between read-only commands'
+else
+	ko 'grok review denies shell writes and allows pipes between read-only commands'
 fi
 
 fakegrok '{"type":"text","data":"partial"}'
