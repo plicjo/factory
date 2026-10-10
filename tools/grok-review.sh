@@ -37,6 +37,13 @@ read_only=(
   'echo *' 'rg *' 'grep *' 'ls *' 'cat *' 'head *' 'tail *' 'wc *' 'nl *' 'cut *'
   'diff *' 'jq *' 'find *' 'sed -n *'
 )
+# grok approves a chain only when every stage matches an allow rule, and its built-in read-only list does
+# not count toward that. `git status *` does not match a bare `git status`, so a chain such as
+# `git fetch && git status` is cancelled. These commands run usefully with no argument, so each also gets a bare rule.
+bare=(
+  'git log' 'git diff' 'git show' 'git status' 'git fetch' 'git ls-files' 'git show-ref' 'git describe'
+  'gh pr view' 'gh pr diff' 'ls'
+)
 # sort and uniq have no rule: an allow rule would admit sort -o and uniq IN OUT, which grok's own
 # read-only handling refuses while still running them in a pipeline.
 # Redirection, substitution and the destructive find actions turn an allowed command into a write.
@@ -51,6 +58,7 @@ for rule in "${read_only[@]}"; do
   rules+=(--allow "Bash($rule)")
   allowed+="${rule% \*}, "
 done
+for rule in "${bare[@]}"; do rules+=(--allow "Bash($rule)"); done
 for rule in "${unsafe[@]}"; do rules+=(--deny "Bash($rule)"); done
 
 # Grok has no switch to turn off its bundled skills, and its review skill tells it to spawn a
@@ -60,7 +68,7 @@ for rule in "${unsafe[@]}"; do rules+=(--deny "Bash($rule)"); done
 # steers Grok to type filters and unquoted globs.
 {
   echo "Do this review yourself in this session. Do not load skills or spawn subagents, write no files, and print the findings as your final reply."
-  echo "Run only these read-only commands, each with no output redirection, process substitution or command substitution: ${allowed%, }. Join them with a pipe when you need to, as long as every stage is one of these. Never put * inside quotes. Filter files by type, such as rg -t js, or write a glob unquoted, such as --glob=*.ex. Any other command ends the session."
+  echo "Run only these read-only commands, each with no output redirection, process substitution or command substitution: ${allowed%, }. Join them with a pipe or && when you need to, as long as every stage is one of these. Never put * inside quotes. Filter files by type, such as rg -t js, or write a glob unquoted, such as --glob=*.ex. Any other command ends the session."
   echo "End the reply with one line that starts with VERDICT: and gives your verdict in the brief's terms, for example VERDICT: ship with fixes."
   echo
   cat "$brief"

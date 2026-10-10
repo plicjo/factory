@@ -244,6 +244,16 @@ else
 	ko 'grok review denies shell writes and allows pipes between read-only commands'
 fi
 
+bare_ok=1
+for cmd in 'git status' 'git fetch' 'ls' 'gh pr view' 'gh pr diff'; do
+	grep -Fqx "Bash($cmd)" "$T/argv" || bare_ok=0
+done
+if [ "$bare_ok" -eq 1 ]; then
+	ok 'grok review allows bare git status, git fetch, ls and gh pr view, since a chain with one is cancelled otherwise'
+else
+	ko 'grok review allows bare git status, git fetch, ls and gh pr view, since a chain with one is cancelled otherwise'
+fi
+
 fakegrok '{"type":"text","data":"partial"}'
 out=$(grokreview); code=$?
 if [ "$code" -eq 5 ]; then ok 'grok review exits 5 when the stream has no end event'; else ko 'grok review exits 5 when the stream has no end event'; fi
