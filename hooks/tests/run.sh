@@ -291,5 +291,52 @@ bad=$(jq -r '.. | .command? // empty' "$H/hooks.json" | while read -r cmd; do
 done)
 if [ -z "$bad" ]; then ok 'every hook runs as bash "${CLAUDE_PLUGIN_ROOT}/hooks/<script>" and the script exists'; else ko "hook commands grok cannot run: $bad"; fi
 
+# Auto-prune: a scratch repo with one branch per case, swept once at the real time and once a day later.
+R="$T/prune"
+mkdir -p "$R"
+git init -q --bare -b main "$R/origin.git"
+git clone -q "$R/origin.git" "$R/repo" 2>/dev/null
+g() { git -C "$R/repo" -c user.name=t -c user.email=t@t "$@"; }
+g commit -q --allow-empty -m base
+g push -q origin main
+land() {
+	g worktree add -q -b "$1" "$R/$1" main && echo "$1" >"$R/$1/$1" && git -C "$R/$1" add "$1" &&
+		git -C "$R/$1" -c user.name=t -c user.email=t@t commit -q -m "$1" && git -C "$R/repo" -c user.name=merger -c user.email=m@m cherry-pick "$1" >/dev/null
+}
+age() { python3 -c 'import os,sys,time; t=time.time()-3*3600; [os.utime(p,(t,t)) for p in sys.argv[1:] if os.path.exists(p)]' "$@"; }
+idle() { d=$(git -C "$R/$1" rev-parse --absolute-git-dir); age "$d/index" "$d/HEAD" "$d/logs/HEAD"; }
+land wt-idle && idle wt-idle
+land wt-active
+land wt-dirty && echo x >"$R/wt-dirty/edit" && idle wt-dirty
+land wt-locked && g worktree lock "$R/wt-locked" && idle wt-locked
+g push -q origin main
+g branch br-empty main
+g worktree add -q -b br-unmerged "$R/br-unmerged" main && git -C "$R/br-unmerged" -c user.name=t -c user.email=t@t commit -q --allow-empty -m mine
+g worktree remove "$R/br-unmerged"
+branches() { g for-each-ref --format='%(refname:short)' refs/heads/ | tr '\n' ' '; }
+prune() { PATH="$fakebin:$PATH" bash "$H/../tools/prune-merged.sh" "$R/repo"; }
+printf '#!/bin/sh\nexit 1\n' >"$fakebin/gh" && chmod +x "$fakebin/gh"
+
+prune
+if [ "$(branches)" = "br-empty br-unmerged main wt-active wt-dirty wt-locked " ] && [ ! -d "$R/wt-idle" ] && [ -d "$R/wt-active" ]; then
+	ok 'auto-prune removes a landed idle worktree and keeps active, dirty, locked, unmerged and fresh empty ones'
+else
+	ko "auto-prune removes a landed idle worktree and keeps active, dirty, locked, unmerged and fresh empty ones (left: $(branches))"
+fi
+
+printf '#!/bin/sh\necho "$1" >>"%s"\ngit worktree remove "%s/$1"\n' "$R/removed" "$R" >"$R/remover.sh"
+g config factory.worktreeRemove "sh $R/remover.sh"
+FACTORY_PRUNE_NOW=$(( $(date +%s) + 90000 )) prune
+if [ "$(branches)" = "br-unmerged main wt-dirty wt-locked " ] && [ "$(cat "$R/removed")" = wt-active ] && [ -d "$R/wt-dirty" ]; then
+	ok 'auto-prune removes empty branches after a day and runs the repo remover for each worktree'
+else
+	ko "auto-prune removes empty branches after a day and runs the repo remover for each worktree (left: $(branches))"
+fi
+
+FACTORY_AUTO_PRUNE=0 FACTORY_PRUNE_NOW=$(( $(date +%s) + 90000 )) prune
+g worktree unlock "$R/wt-locked"
+FACTORY_AUTO_PRUNE=0 FACTORY_PRUNE_NOW=$(( $(date +%s) + 90000 )) prune
+if [ -d "$R/wt-locked" ]; then ok 'auto-prune does nothing when FACTORY_AUTO_PRUNE=0'; else ko 'auto-prune does nothing when FACTORY_AUTO_PRUNE=0'; fi
+
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
