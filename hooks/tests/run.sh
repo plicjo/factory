@@ -155,6 +155,35 @@ fi
 out=$(seatctx 1 "$(agentcall factory-code 'review with \"subagent_type\": \"factory-reviewer-a\"')")
 if [ -z "$out" ]; then ok 'grok flag on: an escaped subagent_type in the prompt does not fool the extraction'; else ko 'grok flag on: an escaped subagent_type in the prompt does not fool the extraction'; fi
 
+fablectx() { printf '%s' "$2" | FACTORY_FABLE_SEAT="$1" bash "$H/fable-seat-reminder.sh"; }
+
+for name in factory-reviewer-a factory:factory-reviewer-a; do
+	out=$(fablectx 1 "$(agentcall "$name" 'review this')")
+	if printf '%s' "$out" | grep -q '"hookEventName":"PreToolUse"' &&
+		printf '%s' "$out" | grep -q '"additionalContext":".*factory-reviewer-fable' &&
+		! printf '%s' "$out" | grep -q 'permissionDecision'; then
+		ok "fable flag on, $name: adds the seat reminder"
+	else
+		ko "fable flag on, $name: adds the seat reminder"
+	fi
+done
+
+for name in factory-reviewer-b factory-reviewer-c factory-reviewer-fable factory:factory-reviewer-fable factory-reviewer-grok factory-code general-purpose; do
+	out=$(fablectx 1 "$(agentcall "$name" 'review this')")
+	if [ -z "$out" ]; then ok "fable flag on, $name: stays quiet"; else ko "fable flag on, $name: stays quiet"; fi
+done
+
+for flag in '' 0 true yes 11; do
+	out=$(fablectx "$flag" "$(agentcall factory-reviewer-a 'review this')")
+	if [ -z "$out" ]; then ok "fable flag '$flag': stays quiet"; else ko "fable flag '$flag': stays quiet"; fi
+done
+
+out=$(printf '%s' "$(agentcall factory-reviewer-a 'review this')" | env -u FACTORY_FABLE_SEAT bash "$H/fable-seat-reminder.sh")
+if [ -z "$out" ]; then ok 'fable flag unset: stays quiet'; else ko 'fable flag unset: stays quiet'; fi
+
+out=$(fablectx 1 "$(agentcall factory-code 'review with \"subagent_type\": \"factory-reviewer-a\"')")
+if [ -z "$out" ]; then ok 'fable flag on: an escaped subagent_type in the prompt does not fool the extraction'; else ko 'fable flag on: an escaped subagent_type in the prompt does not fool the extraction'; fi
+
 fakebin="$T/fakebin"
 mkdir -p "$fakebin"
 printf 'brief' >"$T/brief"

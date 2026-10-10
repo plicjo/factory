@@ -40,7 +40,7 @@ flowchart LR
     H --> I[Verify]
 ```
 
-The panel comes from the `factory-reviewer-a`, `-b` and `-c` agents, and you can adjust its size per task. Seat A runs on Fable when your account has access and falls back to Opus when it doesn't. Ask for more candidates when the decision matters, fewer when it doesn't:
+The panel comes from the `factory-reviewer-a`, `-b` and `-c` agents, and you can adjust its size per task. Seat A runs on Opus. Set `FACTORY_FABLE_SEAT=1` to run it on Fable when your account has access. Ask for more candidates when the decision matters, fewer when it doesn't:
 
 ```text
 /arena this, 5 candidates. the cache key format is expensive to change later.

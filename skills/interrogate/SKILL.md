@@ -42,7 +42,7 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 | Reviewer B | `factory-reviewer-b` |
 | Reviewer C | `factory-reviewer-c` |
 
-**Seat A tries Fable first.** Spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
+**Fable seat (opt-in).** Seat A is `factory-reviewer-a`. When the environment sets `FACTORY_FABLE_SEAT=1`, spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
 
 **Grok seat (opt-in).** When the environment sets `FACTORY_GROK_SEAT=1`, add seat D on `factory-reviewer-grok`. It relays the same filled brief to the local `grok` CLI in headless mode through `tools/grok-review.sh` and is read-only. If the seat reports the CLI missing or unauthenticated, continue with the Anthropic seats and name the absence in the verdict. Agreement between the Grok seat and any Anthropic seat is cross-family agreement. Weight it above agreement among the Anthropic seats.
 

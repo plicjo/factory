@@ -17,7 +17,8 @@
       {
         "matcher": "Agent",
         "hooks": [
-          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/grok-seat-reminder.sh" }
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/grok-seat-reminder.sh" },
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/fable-seat-reminder.sh" }
         ]
       }
     ]
