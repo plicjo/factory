@@ -34,13 +34,18 @@ read_only=(
   'git log *' 'git diff *' 'git show *' 'git status *' 'git rev-parse *' 'git fetch *' 'git blame *'
   'git ls-files *' 'git ls-tree *' 'git cat-file *' 'git merge-base *' 'git grep *' 'git rev-list *'
   'git diff-tree *' 'git show-ref *' 'git describe *' 'git shortlog *' 'gh pr view *' 'gh pr diff *'
-  'echo *' 'rg *' 'grep *' 'ls *' 'cat *' 'head *' 'tail *' 'wc *' 'nl *' 'sort *' 'uniq *' 'cut *'
+  'echo *' 'rg *' 'grep *' 'ls *' 'cat *' 'head *' 'tail *' 'wc *' 'nl *' 'cut *'
   'diff *' 'jq *' 'find *' 'sed -n *'
 )
+# sort and uniq have no rule: an allow rule would admit sort -o and uniq IN OUT, which grok's own
+# read-only handling refuses while still running them in a pipeline.
 # Redirection, substitution and the destructive find actions turn an allowed command into a write.
-unsafe=('*>*' '*<(*' '*$(*' '*`*' 'find * -delete*' 'find * -exec*')
+# dontAsk lets touch and mkdir through, so they are denied by name.
+unsafe=('*>*' '*<(*' '*$(*' '*`*' 'find * -delete*' 'find * -exec*' 'touch *' 'mkdir *')
 
-rules=(--deny Write --deny Edit)
+# No --deny Write or --deny Edit: either one makes grok refuse an rg that reads a pipe, which cancels
+# the session. dontAsk already refuses both tools because no rule allows them.
+rules=()
 allowed=""
 for rule in "${read_only[@]}"; do
   rules+=(--allow "Bash($rule)")
@@ -53,7 +58,7 @@ for rule in "${unsafe[@]}"; do rules+=(--deny "Bash($rule)"); done
 # session as cancelled, so the brief names the allowed commands.
 {
   echo "Do this review yourself in this session. Do not load skills or spawn subagents, write no files, and print the findings as your final reply."
-  echo "Run only these read-only commands, each with no output redirection, process substitution or command substitution: ${allowed%, }. Any other command ends the session."
+  echo "Run only these read-only commands, each with no output redirection, process substitution or command substitution: ${allowed%, }. Join them with a pipe when you need to, as long as every stage is one of these. Any other command ends the session."
   echo "End the reply with one line that starts with VERDICT: and gives your verdict in the brief's terms, for example VERDICT: ship with fixes."
   echo
   cat "$brief"
