@@ -45,10 +45,12 @@ Files with no upstream counterpart.
 | `hooks/background-long-commands.sh` | Runs long Bash commands in the background. |
 | `hooks/grok-seat-reminder.sh` | Tells a panel seat's spawn to add the Grok seat when `FACTORY_GROK_SEAT=1`. |
 | `hooks/fable-seat-reminder.sh` | Tells a seat A spawn to run on Fable when `FACTORY_FABLE_SEAT=1`. |
+| `hooks/prune-merged.sh` | Starts the branch and worktree sweep in the background at session start. |
 | `hooks/tests/run.sh` | Tests the hooks. |
 | `.github/workflows/ci.yml` | Runs the hook tests, the watch-pr tests and typecheck, and the port checks. |
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
 | `tools/check-forks.py` | Fails CI when the repo diverges from upstream without a row here. |
+| `tools/prune-merged.sh` | Deletes landed and empty local branches and their clean, idle worktrees, with `--dry-run` to preview. |
 | `tools/grok-review.sh` | Gates the opt-in Grok seat on `FACTORY_GROK_SEAT=1`, runs the `grok` CLI read-only, resumes the session when a refused command cancels it, and exits nonzero when the session did not finish. |
 | `upstream-log.sh` | Lists upstream commits since the sync base. |
 | `skills/deslop/SKILL.md` | Vendored from cursor-team-kit. Upstream pstack points at that plugin instead. |
@@ -82,6 +84,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/factory-mode/playbooks/babysit.md` | Drops the Cursor built-in babysit note and the Bugbot step. |
 | `skills/factory-mode/playbooks/multi-phase-plan.md` | Plugin-relative paths, `verify-*` skills, worktree lanes, and review-bot wording. |
 | `skills/factory-mode/playbooks/eval.md`, `session-pickup.md` | Reads Claude Code sessions under `~/.claude/projects/`. The eval judge runs on the opt-in Grok seat when `FACTORY_GROK_SEAT=1`. |
+| `skills/factory-mode/playbooks/worktree-cleanup.md` | Notes that the session-start sweep already removes landed and empty branches and their clean, idle worktrees. |
 | `skills/factory-mode/references/bugbot-triage.md` | Names the review bot generically instead of Bugbot. |
 | `skills/factory-mode/scripts/worktree-audit.sh` | Finds sessions under `~/.claude/projects/`. |
 | `skills/factory-mode/scripts/package.json`, `bun.lock` | The package is `factory-mode-tools` and the test script drops `orch`. |

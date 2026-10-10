@@ -65,16 +65,17 @@ defect over panel consensus.
 
 The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright. With the flag set, a hook reminds any panel seat's spawn to add the Grok seat. The Fable seat is opt-in the same way through `FACTORY_FABLE_SEAT=1`.
 
-**4 hooks.** One keeps factory-mode sticky for the session. One moves long Bash commands
+**5 hooks.** One keeps factory-mode sticky for the session. One moves long Bash commands
 to the background: a foreground call with a timeout over two minutes is denied and the agent
 reruns it with `run_in_background`, so a long test run never locks you out of the conversation. The third adds the Grok seat reminder. The fourth adds the Fable seat reminder.
-`hooks/tests/run.sh` tests all four.
+The fifth sweeps leftovers at session start. In the background, `tools/prune-merged.sh` deletes local branches whose commits are all on the base branch, and branches with no commits that have sat for a day. It also removes their worktrees when they are clean, unlocked and idle. It never touches uncommitted work, unmerged commits or the checkout you are in, and it logs to `.git/factory-prune.log`. Set `FACTORY_AUTO_PRUNE=0` to turn it off, run the script with `--dry-run` to preview it, and set `git config factory.worktreeRemove '<command>'` when a repo removes worktrees its own way, such as one that also drops per-worktree databases.
+`hooks/tests/run.sh` tests all five.
 
 ## CI
 
 Four jobs run on every PR and push to main:
 
-- `hooks` runs the 69 hook tests.
+- `hooks` runs the 76 hook tests.
 - `port` fails on a markdown reference to a missing file and on banned Cursor-era terms.
 - `forks` fetches upstream at the SHA pinned in `FORKS.md` and fails on an undeclared divergence.
 - `scripts` runs the watch-pr watcher's tests and typecheck under bun.
