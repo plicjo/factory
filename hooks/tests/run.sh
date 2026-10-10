@@ -238,5 +238,29 @@ fakegrok '{"type":"text","data":"partial"}'
 out=$(grokreview); code=$?
 if [ "$code" -eq 5 ]; then ok 'grok review exits 5 when the stream has no end event'; else ko 'grok review exits 5 when the stream has no end event'; fi
 
+cat >"$fakebin/grok" <<EOF
+#!/bin/sh
+prev=""
+for a in "\$@"; do
+	[ "\$prev" = --resume ] && printf %s "\$a" >"$T/resumed"
+	[ "\$prev" = --prompt-file ] && cp "\$a" "$T/sent"
+	prev=\$a
+done
+if [ -f "$T/resumed" ]; then
+	printf '%s\n' '{"type":"text","data":"none"}' '{"type":"end","stopReason":"end_turn","sessionId":"s1"}'
+else
+	printf '%s\n' '{"type":"tool_call","toolCallId":"c1","rawInput":{"command":"rg x --glob \\"*.ex\\""}}' \\
+		'{"type":"tool_call_update","toolCallId":"c1","status":"failed","content":[{"type":"content","content":{"type":"text","text":"User cancelled"}}]}' \\
+		'{"type":"end","stopReason":"cancelled","sessionId":"s1"}'
+fi
+EOF
+rm -f "$T/resumed"
+out=$(grokreview); code=$?
+if [ "$code" -eq 0 ] && [ "$out" = none ] && [ "$(cat "$T/resumed")" = s1 ] && grep -Fq 'rg x --glob "*.ex"' "$T/sent"; then
+	ok 'grok review resumes a cancelled session, names the refused command, and relays the reply'
+else
+	ko 'grok review resumes a cancelled session, names the refused command, and relays the reply'
+fi
+
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
