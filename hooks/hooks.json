@@ -3,7 +3,7 @@
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/factory-mode-reminder.sh" }
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/factory-mode-reminder.sh\"" }
         ]
       }
     ],
@@ -11,14 +11,14 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/background-long-commands.sh" }
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/background-long-commands.sh\"" }
         ]
       },
       {
         "matcher": "Agent",
         "hooks": [
-          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/grok-seat-reminder.sh" },
-          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/fable-seat-reminder.sh" }
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/grok-seat-reminder.sh\"" },
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/fable-seat-reminder.sh\"" }
         ]
       }
     ]
