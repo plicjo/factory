@@ -262,5 +262,14 @@ else
 	ko 'grok review resumes a cancelled session, names the refused command, and relays the reply'
 fi
 
+# Grok reads a hook command with no space as a path relative to hooks.json, so a quoted
+# "${CLAUDE_PLUGIN_ROOT}" path never runs there. A bash prefix makes it a shell command in both hosts.
+bad=$(jq -r '.. | .command? // empty' "$H/hooks.json" | while read -r cmd; do
+	script=${cmd#'bash "${CLAUDE_PLUGIN_ROOT}/hooks/'}
+	script=${script%'"'}
+	if [ "$script" = "$cmd" ] || [ ! -f "$H/$script" ]; then printf '%s\n' "$cmd"; fi
+done)
+if [ -z "$bad" ]; then ok 'every hook runs as bash "${CLAUDE_PLUGIN_ROOT}/hooks/<script>" and the script exists'; else ko "hook commands grok cannot run: $bad"; fi
+
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
