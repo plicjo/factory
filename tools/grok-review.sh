@@ -107,5 +107,6 @@ if [[ "$status" -ne 0 || "$reason" != "end_turn" ]]; then
   exit 5
 fi
 
-jq -rj 'select(.type == "text") | .data' "$work/stream"
+# Text before a tool call is Grok narrating its next step, so relay only the reply after the last one.
+jq -rjs '(map(.type == "tool_call") | rindex(true) // -1) as $last | .[$last + 1:][] | select(.type == "text") | .data' "$work/stream"
 echo

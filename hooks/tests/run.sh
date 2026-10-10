@@ -204,6 +204,16 @@ fakegrok '{"type":"text","data":"## Findings\n"}
 out=$(grokreview); code=$?
 if [ "$code" -eq 0 ] && printf '%s' "$out" | grep -q 'none'; then ok 'grok review relays the reply on end_turn'; else ko 'grok review relays the reply on end_turn'; fi
 
+fakegrok '{"type":"text","data":"I will read the README first."}
+{"type":"tool_call","toolCallId":"c1","rawInput":{"command":"cat README.md"}}
+{"type":"tool_call_update","toolCallId":"c1","status":"completed"}
+{"type":"text","data":"## Findings\n"}
+{"type":"text","data":"none"}
+{"type":"end","stopReason":"end_turn"}'
+out=$(grokreview); code=$?
+if [ "$code" -eq 0 ] && [ "$out" = "## Findings
+none" ]; then ok 'grok review relays only the reply after the last tool call'; else ko 'grok review relays only the reply after the last tool call'; fi
+
 if [ "$(cat "$T/turns")" = 60 ] && grep -q 'starts with VERDICT:' "$T/sent" && grep -q '^brief$' "$T/sent"; then
 	ok 'grok review caps at 60 turns and sends the verdict instruction ahead of the brief'
 else
