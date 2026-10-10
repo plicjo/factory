@@ -102,7 +102,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 | Parallel fan-out slices (`swarm`) | `factory-worker` |
 | Opt-in cross-family seat and judge (panel seat D, arena and eval judge, trail review, reflect divergent lens) | `factory-reviewer-grok` |
 
-**Seat A tries Fable first.** Wherever a skill spawns `factory-reviewer-a`, spawn `factory-reviewer-fable` with the same brief instead. If it fails with "requires usage credits", the account has no Fable access. Respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
+**Seat A is `factory-reviewer-a`.** Fable is opt-in. When the environment sets `FACTORY_FABLE_SEAT=1`, spawn `factory-reviewer-fable` with the same brief wherever a skill spawns `factory-reviewer-a`. If it fails with "requires usage credits", the account has no Fable access. Respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
 
 Code delegates tier by difficulty. Trivial mechanical edits and ordinary scoped work go to `factory-code`. Anything where a mistake is expensive goes to `factory-hard`.
 

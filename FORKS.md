@@ -37,13 +37,14 @@ Files with no upstream counterpart.
 | `agents/factory-reviewer-a.md` | Review panel seat A. |
 | `agents/factory-reviewer-b.md` | Review panel seat B. |
 | `agents/factory-reviewer-c.md` | Review panel seat C. |
-| `agents/factory-reviewer-fable.md` | Seat A on Fable, with `factory-reviewer-a` as the fallback. |
+| `agents/factory-reviewer-fable.md` | Opt-in seat A on Fable, with `factory-reviewer-a` as the fallback. |
 | `agents/factory-reviewer-grok.md` | Opt-in cross-family seat that relays briefs to the local `grok` CLI. |
 | `agents/factory-worker.md` | Swarm worker that isolates into its own git worktree. |
 | `hooks/hooks.json` | Registers the Claude Code hooks. |
 | `hooks/factory-mode-reminder.sh` | Keeps factory-mode on for the whole session. |
 | `hooks/background-long-commands.sh` | Runs long Bash commands in the background. |
 | `hooks/grok-seat-reminder.sh` | Tells a panel seat's spawn to add the Grok seat when `FACTORY_GROK_SEAT=1`. |
+| `hooks/fable-seat-reminder.sh` | Tells a seat A spawn to run on Fable when `FACTORY_FABLE_SEAT=1`. |
 | `hooks/tests/run.sh` | Tests the hooks. |
 | `.github/workflows/ci.yml` | Runs the hook tests, the watch-pr tests and typecheck, and the port checks. |
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
@@ -75,7 +76,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
 | `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, and `deslop` by name. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |
-| `skills/factory-mode/playbooks/autopilot-full.md`, `autopilot-stack.md`, `shipping.md` | Owners are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. |
+| `skills/factory-mode/playbooks/autopilot-full.md`, `autopilot-stack.md`, `shipping.md` | Owners are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. Autopilot-full step 4 sizes the review swarm to the change risk. |
 | `skills/factory-mode/playbooks/autonomous-run.md` | Uses the Claude Code `/loop` command and `AskUserQuestion`. |
 | `skills/factory-mode/playbooks/authoring-a-skill.md` | Replaces Cursor's `create-skill` with the `skills/<name>/SKILL.md` layout. |
 | `skills/factory-mode/playbooks/babysit.md` | Drops the Cursor built-in babysit note and the Bugbot step. |

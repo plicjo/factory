@@ -54,27 +54,27 @@ playbook picks a role and never passes a model.
 | `factory-explorer` | Read-only exploration | Sonnet, high |
 | `factory-synthesizer` | Read-only prose and judgment | Opus, max |
 | `factory-reviewer-a` / `-b` / `-c` | Review panel seats | Opus max, Opus high, Sonnet high |
-| `factory-reviewer-fable` | Seat A on accounts with Fable access | Fable, max |
+| `factory-reviewer-fable` | Opt-in seat A on accounts with Fable access | Fable, max |
 | `factory-reviewer-grok` | Opt-in cross-family seat via the local grok CLI | Haiku transport, Grok 4.7 does the reviewing |
 | `factory-worker` | Swarm worker, isolated in its own git worktree | Sonnet, high |
 | `comment-sicko` | Comment reviewer for `/no-comments` | inherits |
 
-Review seat A tries `factory-reviewer-fable` first and falls back to `factory-reviewer-a` without
-Fable access. By default every seat is an Anthropic model, so the skills weight a concrete reproducible
+Review seat A is `factory-reviewer-a`. Set `FACTORY_FABLE_SEAT=1` to run it on `factory-reviewer-fable`
+instead, which falls back to `factory-reviewer-a` without Fable access. By default every seat is an Anthropic model, so the skills weight a concrete reproducible
 defect over panel consensus.
 
-The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright. With the flag set, a hook reminds any panel seat's spawn to add the Grok seat.
+The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright. With the flag set, a hook reminds any panel seat's spawn to add the Grok seat. The Fable seat is opt-in the same way through `FACTORY_FABLE_SEAT=1`.
 
-**3 hooks.** One keeps factory-mode sticky for the session. One moves long Bash commands
+**4 hooks.** One keeps factory-mode sticky for the session. One moves long Bash commands
 to the background: a foreground call with a timeout over two minutes is denied and the agent
-reruns it with `run_in_background`, so a long test run never locks you out of the conversation. The third adds the Grok seat reminder.
-`hooks/tests/run.sh` tests all three.
+reruns it with `run_in_background`, so a long test run never locks you out of the conversation. The third adds the Grok seat reminder. The fourth adds the Fable seat reminder.
+`hooks/tests/run.sh` tests all four.
 
 ## CI
 
 Four jobs run on every PR and push to main:
 
-- `hooks` runs the 51 hook tests.
+- `hooks` runs the 69 hook tests.
 - `port` fails on a markdown reference to a missing file and on banned Cursor-era terms.
 - `forks` fetches upstream at the SHA pinned in `FORKS.md` and fails on an undeclared divergence.
 - `scripts` runs the watch-pr watcher's tests and typecheck under bun.
