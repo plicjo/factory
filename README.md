@@ -63,7 +63,7 @@ Review seat A is `factory-reviewer-a`. Set `FACTORY_FABLE_SEAT=1` to run it on `
 instead, which falls back to `factory-reviewer-a` without Fable access. By default every seat is an Anthropic model, so the skills weight a concrete reproducible
 defect over panel consensus.
 
-The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright. With the flag set, a hook reminds any panel seat's spawn to add the Grok seat. The Fable seat is opt-in the same way through `FACTORY_FABLE_SEAT=1`.
+The Grok seat is opt-in. Set `FACTORY_GROK_SEAT=1` and install and authenticate the `grok` CLI to add it. Environments that must not send code to non-Anthropic vendors simply never set the flag, and a `Bash(grok *)` permissions deny rule can block the CLI outright. With the flag set, a hook reminds any panel seat's spawn to add the Grok seat. The seat runs Grok at low reasoning effort and gives up after 10 minutes. Set `FACTORY_GROK_EFFORT` or `FACTORY_GROK_TIMEOUT` (in seconds) to change either. The Fable seat is opt-in the same way through `FACTORY_FABLE_SEAT=1`.
 
 **5 hooks.** One keeps factory-mode sticky for the session. One moves long Bash commands
 to the background: a foreground call with a timeout over two minutes is denied and the agent
