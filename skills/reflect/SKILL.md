@@ -8,13 +8,9 @@ disable-model-invocation: true
 
 Mine the current conversation for durable learnings, then route them into skill edits.
 
-## When to invoke
-
 Invoke when the user says "reflect" or "/reflect". Skip when the conversation is trivial, off-topic, or already covered by an existing skill the parent followed correctly. One-offs are not learnings.
 
-## Process
-
-### 1. Locate the active transcript
+## 1. Locate the active transcript
 
 The parent finds its own transcript file before fanning out. Sessions live in this project's session directory, `~/.claude/projects/<slug>/`, where `<slug>` is the repo's absolute path with every `/` turned into `-` (so `/Users/you/projects/app` becomes `-Users-you-projects-app`). Each `<uuid>.jsonl` file there is one session, one JSON object per line. Do not glob across `~/.claude/projects/*/`. That crosses project boundaries and reads private chats from unrelated projects.
 
@@ -22,11 +18,9 @@ The parent finds its own transcript file before fanning out. Sessions live in th
 ls -t ~/.claude/projects/<slug>/*.jsonl 2>/dev/null | head -10
 ```
 
-Three transcript layouts: legacy flat (`<id>.jsonl`), current nested (`<id>/<id>.jsonl`), and subagent (`<parent>/subagents/<child>.jsonl`).
+That covers the legacy flat (`<id>.jsonl`), current nested (`<id>/<id>.jsonl`), and subagent (`<parent>/subagents/<child>.jsonl`) layouts. For each candidate, read the first JSONL line. Take the file whose `message.content[0].text` contains the conversation's opening user prompt. If none matches, pass a tight digest of the session instead.
 
-For each candidate, read the first JSONL line and check that `message.content[0].text` contains the conversation's opening user prompt. Take the matching path. If no path resolves, write a tight digest of the session and pass that instead.
-
-### 2. Spawn three reviewers in parallel
+## 2. Spawn three reviewers in parallel
 
 One message, three `Agent` calls, one per lens, using the agent named below. Reviewers keep MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript); the read-only agents restrict `Write` and `Edit` only, so MCP tools stay available.
 
@@ -42,30 +36,30 @@ When the environment sets `FACTORY_GROK_SEAT=1`, run the Divergent lens on `fact
 
 Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Agent` response body.
 
-### 3. Synthesize
+## 3. Synthesize
 
 One `Agent` call, `subagent_type: factory-synthesizer`. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
 
-### 4. Structural enforcement check
+## 4. Structural enforcement check
 
-Sanity-check the synthesizer's Accepted list. For any item that would be enforced more reliably by a lint rule, script, metadata flag, or runtime check, move it from Accepted to Backlog. See the **encode-lessons-in-structure** principle skill.
+Move any Accepted item that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog. See the **encode-lessons-in-structure** principle skill.
 
-### 5. Apply
+## 5. Apply
 
-Before applying any Accepted edit, present the synthesizer's full Accepted/Rejected/Backlog output to the user and wait for explicit approval. The user picks which subset to apply and may redirect routings. Skill changes affect every future agent in the org. Do not auto-apply.
+Present the synthesizer's full Accepted / Rejected / Backlog output and wait for explicit approval before applying any Accepted edit. The user picks the subset and may redirect routings. Skill changes affect every future agent in the org. Do not auto-apply.
 
-Backlog items file to whatever devex / backlog tracker your team uses automatically. Only the Accepted list waits for approval.
+File each Backlog item to your team's devex or backlog tracker without waiting. Only the Accepted list waits for approval.
 
-For each approved Accepted item, follow the Routing field exactly:
+Follow each approved row's Routing exactly:
 
 - Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): parent does directly.
 - Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): follow `skills/factory-mode/playbooks/authoring-a-skill.md`.
 - `tune description: <skill path>` (the skill exists but didn't trigger when it should have): follow `skills/factory-mode/playbooks/authoring-a-skill.md` and rewrite the description against the missed trigger.
 - `new skill via authoring-a-skill: <kebab-name>`: follow `skills/factory-mode/playbooks/authoring-a-skill.md`. A new skill is a directory under `skills/` with a `SKILL.md`. Do not invent the shape ad hoc.
 
-If your environment ships a SKILL.md validator, run it on every touched skill before declaring done. Skip this step if it doesn't.
+If your environment ships a SKILL.md validator, run it on every touched skill before declaring done.
 
-### 6. Summarize for the user
+## 6. Summarize for the user
 
 Short list, no preamble:
 

@@ -3,8 +3,8 @@
 This file records every intentional divergence from upstream pstack.
 
 - Upstream is `pstack/` in [cursor/plugins](https://github.com/cursor/plugins).
-- The recorded sync base is `df581122cde17e6e27686b5a448bde23e4ad4318`, the `BASE` in `upstream-log.sh`.
-- The compared snapshot is `ccb5507cec1546dc88135c1139c811e6c59115ba`, the upstream head when this file was written.
+- The recorded sync base is `978ca6e9c0e012047cd5058b8e829240336e704e`, the `BASE` in `upstream-log.sh`.
+- The compared snapshot is `978ca6e9c0e012047cd5058b8e829240336e704e`, the upstream head when this file was written.
 - A file absent from the tables below matches upstream apart from the name substitutions. `poteto-mode` is `factory-mode`, `poteto-agent` is `factory-agent`, and prose says factory instead of poteto.
 - The `deslop` skill is vendored from cursor-team-kit, not pstack. Its license is in `LICENSE-cursor-team-kit`.
 - A PR that changes a ported file, or adds or drops one, updates its row here. The `forks` CI job runs `tools/check-forks.py` and fails on an undeclared divergence. After a sync, bump the snapshot SHA above and rerun it.

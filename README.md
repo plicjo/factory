@@ -1,7 +1,7 @@
 # factory
 
 My agent workflow stack, packaged as a Claude Code plugin. Forked from [pstack](https://github.com/cursor/plugins/tree/main/pstack)
-by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.15 (cursor/plugins@df58112, the `BASE` in `upstream-log.sh`).
+by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.17 (cursor/plugins@978ca6e, the `BASE` in `upstream-log.sh`).
 Diverged since; not a mirror. [FORKS.md](FORKS.md) records every intentional divergence.
 The `deslop` skill comes from cursor-team-kit in the same repo, also MIT licensed (`LICENSE-cursor-team-kit`).
 
@@ -39,8 +39,8 @@ so they can prove a change works on the real app instead of claiming it.
 
 ## What's inside
 
-**49 skills.** 25 workflow skills you can invoke directly, such as `/how`, `/why`, `/architect`,
-`/arena`, `/interrogate`, `/swarm`, `/tdd`, `/unslop` and `/deslop`, plus 24 principle skills
+**50 skills.** 26 workflow skills you can invoke directly, such as `/how`, `/why`, `/architect`,
+`/arena`, `/interrogate`, `/swarm`, `/tdd`, `/ketchup`, `/unslop` and `/deslop`, plus 24 principle skills
 that factory-mode reads by path and cites in replies. The principles stay out of the slash menu.
 
 **12 agents.** Each agent file pins its model, reasoning effort, tool limits and isolation, so a
