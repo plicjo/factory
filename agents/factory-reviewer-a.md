@@ -1,8 +1,8 @@
 ---
 name: factory-reviewer-a
-description: Adversarial review panelist A. Highest-reasoning seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
+description: Adversarial review panelist A. First seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
 model: opus
-effort: max
+effort: high
 background: true
 disallowedTools: Write, Edit, NotebookEdit, Agent
 ---

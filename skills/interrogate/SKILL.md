@@ -49,7 +49,7 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 Add a fourth or fifth seat by reusing these agents when the design is
 contested enough to warrant it.
 
-Unless the Grok seat is active, the seats differ by model and reasoning effort, not by vendor. That makes
+Unless the Grok seat is active, seats A and B run the same model at the same effort and only seat C differs, by model. That makes
 agreement between them weaker evidence than upstream's cross-family panel.
 Treat a concrete reproducible defect from one seat as outranking agreement
 between the other two, and say so in the verdict when the panel splits that way.
