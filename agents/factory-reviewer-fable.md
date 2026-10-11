@@ -2,7 +2,7 @@
 name: factory-reviewer-fable
 description: Opt-in seat A of interrogate, architect and arena panels. Spawn it only when FACTORY_FABLE_SEAT=1. On a usage-credits error the parent falls back to `factory-reviewer-a`. Reviews a design or diff against the stated intent and the rubric, read-only.
 model: fable
-effort: max
+effort: high
 background: true
 disallowedTools: Write, Edit, NotebookEdit, Agent
 ---

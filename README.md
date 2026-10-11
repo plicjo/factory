@@ -48,13 +48,13 @@ playbook picks a role and never passes a model.
 
 | Agent | Role | Model and effort |
 |---|---|---|
-| `factory-agent` | Routing wrapper for `/factory-mode` tasks | Opus, max |
+| `factory-agent` | Routing wrapper for `/factory-mode` tasks | Opus, high |
 | `factory-code` | Standard code delegate | Sonnet, high |
-| `factory-hard` | Hardest changes, where a mistake is expensive | Opus, max |
+| `factory-hard` | Hardest changes, where a mistake is expensive | Opus, high |
 | `factory-explorer` | Read-only exploration | Sonnet, high |
-| `factory-synthesizer` | Read-only prose and judgment | Opus, max |
-| `factory-reviewer-a` / `-b` / `-c` | Review panel seats | Opus max, Opus high, Sonnet high |
-| `factory-reviewer-fable` | Opt-in seat A on accounts with Fable access | Fable, max |
+| `factory-synthesizer` | Read-only prose and judgment | Opus, high |
+| `factory-reviewer-a` / `-b` / `-c` | Review panel seats | Opus high, Opus high, Sonnet high |
+| `factory-reviewer-fable` | Opt-in seat A on accounts with Fable access | Fable, high |
 | `factory-reviewer-grok` | Opt-in cross-family seat via the local grok CLI | Haiku transport, Grok 4.7 does the reviewing |
 | `factory-worker` | Swarm worker, isolated in its own git worktree | Sonnet, high |
 | `comment-sicko` | Comment reviewer for `/no-comments` | inherits |

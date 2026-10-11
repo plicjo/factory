@@ -34,7 +34,7 @@ Run one runner on each of `factory-reviewer-a`, `factory-reviewer-b` and `factor
 
 **Grok seat (opt-in).** When the environment sets `FACTORY_GROK_SEAT=1`, add seat D on `factory-reviewer-grok`. It relays the same filled brief to the local `grok` CLI in headless mode through `tools/grok-review.sh` and is read-only. If the seat reports the CLI missing or unauthenticated, continue with the Anthropic seats and name the absence in the verdict. Agreement between the Grok seat and any Anthropic seat is cross-family agreement. Weight it above agreement among the Anthropic seats.
 
-Unless the Grok seat is active, the seats differ by model and reasoning effort rather than by vendor, so weight a concrete structural objection over a majority opinion.
+Unless the Grok seat is active, seats A and B run the same model at the same effort and only seat C differs, by model, so weight a concrete structural objection over a majority opinion.
 
 Design it twice. Require at least two structurally distinct candidates before synthesis, even when the first looks sufficient. This is the **exhaust-the-design-space** principle skill made concrete. Whole-shape alternatives, not point fixes inside one shape.
 
