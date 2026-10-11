@@ -281,6 +281,41 @@ if [ "$code" -eq 0 ] && [ "$out" = none ] && [ "$(cat "$T/resumed")" = s1 ] && g
 else
 	ko 'grok review resumes a cancelled session, names the refused command, and relays the reply'
 fi
+if grep -q 'resume 1 after a refused command: rg x' "$T/err"; then
+	ok 'grok review logs each refused command on resume'
+else
+	ko 'grok review logs each refused command on resume'
+fi
+
+argafter() { grep -A1 -Fx -- "$1" "$T/argv" | sed -n 2p; }
+fakegrok '{"type":"end","stopReason":"end_turn"}'
+grokreview >/dev/null
+if [ ! -s "$T/err" ]; then ok 'grok review writes nothing to stderr on a clean finish'; else ko "grok review writes nothing to stderr on a clean finish: $(cat "$T/err")"; fi
+if [ "$(argafter --reasoning-effort)" = low ] && [ "$(argafter --cwd)" = "$PWD" ]; then
+	ok 'grok review runs at low effort in the current directory by default'
+else
+	ko 'grok review runs at low effort in the current directory by default'
+fi
+
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 FACTORY_GROK_EFFORT=medium bash "$H/../tools/grok-review.sh" "$T/brief" "$T" >/dev/null 2>"$T/err"
+if [ "$(argafter --reasoning-effort)" = medium ] && [ "$(argafter --cwd)" = "$T" ]; then
+	ok 'grok review takes FACTORY_GROK_EFFORT and starts in the DIR argument'
+else
+	ko 'grok review takes FACTORY_GROK_EFFORT and starts in the DIR argument'
+fi
+
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" "$T/missing" >/dev/null 2>"$T/err"; code=$?
+if [ "$code" -eq 4 ] && grep -q 'review directory missing' "$T/err"; then ok 'grok review exits 4 on a missing DIR'; else ko 'grok review exits 4 on a missing DIR'; fi
+
+printf '#!/bin/sh\nexec sleep 30\n' >"$fakebin/grok" && chmod +x "$fakebin/grok"
+start=$(date +%s)
+FACTORY_GROK_TIMEOUT=1 grokreview >/dev/null; code=$?
+took=$(( $(date +%s) - start ))
+if [ "$code" -eq 6 ] && [ "$took" -lt 10 ] && grep -q 'no verdict within 1s' "$T/err"; then
+	ok 'grok review exits 6 once the run passes FACTORY_GROK_TIMEOUT'
+else
+	ko "grok review exits 6 once the run passes FACTORY_GROK_TIMEOUT (exit $code after ${took}s)"
+fi
 
 # Grok reads a hook command with no space as a path relative to hooks.json, so a quoted
 # "${CLAUDE_PLUGIN_ROOT}" path never runs there. A bash prefix makes it a shell command in both hosts.

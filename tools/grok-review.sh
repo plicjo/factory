@@ -4,11 +4,14 @@
 # vendors never reach the CLI, and pins the read-only flags in one place.
 # grok exits 0 even when a refused tool call cancels the session, so the script reads the
 # stream's final `end` event and fails unless its stopReason is `end_turn`.
-# Exit codes: 2 seat not enabled, 3 grok CLI or jq missing, 4 brief unreadable,
-# 5 session did not finish, from a refused command that survived every resume or the turn cap (the reason and the last failed tool call go to stderr).
+# Usage: grok-review.sh BRIEF [DIR]. Grok starts in DIR (default: the current directory), so it reads that repository's git history without git -C.
+# Exit codes: 2 seat not enabled, 3 grok CLI or jq missing, 4 brief or DIR unreadable,
+# 5 session did not finish, from a refused command that survived every resume or the turn cap (the reason and the last failed tool call go to stderr),
+# 6 the run passed FACTORY_GROK_TIMEOUT seconds (default 600), counted across resumes.
 set -euo pipefail
 
 brief="${1:-}"
+dir="${2:-$PWD}"
 
 if [[ "${FACTORY_GROK_SEAT:-}" != "1" ]]; then
   echo "grok-review: seat disabled, set FACTORY_GROK_SEAT=1 to enable" >&2
@@ -24,6 +27,11 @@ done
 
 if [[ -z "$brief" || ! -r "$brief" || ! -f "$brief" ]]; then
   echo "grok-review: brief file missing or unreadable: ${brief:-<none>}" >&2
+  exit 4
+fi
+
+if [[ ! -d "$dir" ]]; then
+  echo "grok-review: review directory missing: $dir" >&2
   exit 4
 fi
 
@@ -68,6 +76,7 @@ for rule in "${unsafe[@]}"; do rules+=(--deny "Bash($rule)"); done
 # steers Grok to type filters and unquoted globs.
 {
   echo "Do this review yourself in this session. Do not load skills or spawn subagents, write no files, and print the findings as your final reply."
+  echo "Your working directory is the repository under review. Run git there with no -C; read files elsewhere by absolute path."
   echo "Run only these read-only commands, each with no output redirection, process substitution or command substitution: ${allowed%, }. Join them with a pipe or && when you need to, as long as every stage is one of these. Never put * inside quotes. Filter files by type, such as rg -t js, or write a glob unquoted, such as --glob=*.ex. Any other command ends the session."
   echo "End the reply with one line that starts with VERDICT: and gives your verdict in the brief's terms, for example VERDICT: ship with fixes."
   echo
@@ -82,7 +91,25 @@ grok_flags=(
   --max-turns "${FACTORY_GROK_MAX_TURNS:-60}"
   --permission-mode dontAsk
   --disable-web-search
+  --reasoning-effort "${FACTORY_GROK_EFFORT:-low}"
+  --cwd "$dir"
 )
+
+# grok has no wall-clock limit, and a hung session once held a panel for 25 minutes, so a watchdog
+# ends it at the shared deadline. The watchdog's sleep is killed first so a finished run leaves no marker.
+deadline=$(( $(date +%s) + ${FACTORY_GROK_TIMEOUT:-600} ))
+run_grok() {
+  local left=$(( deadline - $(date +%s) )) rc=0 pid watchdog
+  if (( left <= 0 )); then touch "$work/timed_out"; return 1; fi
+  grok "${grok_flags[@]}" "$@" >"$work/stream" &
+  pid=$!
+  ( sleep "$left" && touch "$work/timed_out" && kill "$pid" ) 2>/dev/null &
+  watchdog=$!
+  wait "$pid" || rc=$?
+  pkill -P "$watchdog" 2>/dev/null || true
+  wait "$watchdog" 2>/dev/null || true
+  return "$rc"
+}
 
 stop_reason() { jq -r 'select(.type == "end") | .stopReason' "$work/stream" | tail -n1; }
 session_id() { jq -r 'select(.type == "end") | .sessionId // empty' "$work/stream" | tail -n1; }
@@ -95,7 +122,7 @@ last_failed() {
 }
 
 status=0
-grok "${grok_flags[@]}" --prompt-file "$work/brief" >"$work/stream" || status=$?
+run_grok --prompt-file "$work/brief" || status=$?
 reason=$(stop_reason)
 
 # A refused command cancels the whole turn, so resume the session and name the refusal. Grok then
@@ -105,10 +132,17 @@ while [[ "$status" -eq 0 && "$reason" == "cancelled" && "$retries" -lt "${FACTOR
   session=$(session_id)
   [[ -n "$session" ]] || break
   retries=$((retries + 1))
-  echo "This command was refused and ended your turn: $(last_failed). Rewrite it to follow the command rules above, with no * inside quotes, and continue the review." >"$work/retry"
-  grok "${grok_flags[@]}" --resume "$session" --prompt-file "$work/retry" >"$work/stream" || status=$?
+  refused=$(last_failed)
+  echo "grok-review: resume $retries after a refused command: $refused" >&2
+  echo "This command was refused and ended your turn: $refused. Rewrite it to follow the command rules above, with no * inside quotes, and continue the review." >"$work/retry"
+  run_grok --resume "$session" --prompt-file "$work/retry" || status=$?
   reason=$(stop_reason)
 done
+
+if [[ -e "$work/timed_out" ]]; then
+  echo "grok-review: no verdict within ${FACTORY_GROK_TIMEOUT:-600}s ($retries resumes); last failed tool call: $(last_failed)" >&2
+  exit 6
+fi
 
 if [[ "$status" -ne 0 || "$reason" != "end_turn" ]]; then
   echo "grok-review: session did not finish (grok exit $status, stopReason ${reason:-none}, $retries resumes); last failed tool call: $(last_failed)" >&2
