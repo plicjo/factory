@@ -35,7 +35,6 @@ Files with no upstream counterpart.
 | `agents/factory-explorer.md` | Read-only explorer for `how` and `why`. |
 | `agents/factory-synthesizer.md` | Read-only synthesis seat for `how`, `why` and `reflect`. |
 | `agents/factory-reviewer-a.md` | Review panel seat A. |
-| `agents/factory-reviewer-b.md` | Review panel seat B. |
 | `agents/factory-reviewer-c.md` | Review panel seat C. |
 | `agents/factory-reviewer-fable.md` | Opt-in seat A on Fable, with `factory-reviewer-a` as the fallback. |
 | `agents/factory-reviewer-grok.md` | Opt-in cross-family seat that relays briefs to the local `grok` CLI. |
@@ -74,7 +73,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/principle-test-behavior-not-implementation/SKILL.md` | Adds the framework and real-data rules. |
 | `skills/principle-sequence-verifiable-units/SKILL.md` | Delivery guidance says one commit per PR. |
 | `skills/how/SKILL.md`, `skills/why/SKILL.md`, `skills/swarm/SKILL.md` | Spawns name `factory-explorer`, `factory-synthesizer` or `factory-worker` instead of model lines. |
-| `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Each adds the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1`. |
+| `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a` and `-c`. The text says same-vendor agreement is weaker evidence. Each adds the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1`. |
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
 | `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, and `deslop` by name. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |

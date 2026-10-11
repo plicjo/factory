@@ -30,11 +30,11 @@ Skip Phase A only when the work is genuinely greenfield with no surrounding syst
 
 Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt. Each candidate produces a design package shaped per `references/rationale-template.md`.
 
-Run one runner on each of `factory-reviewer-a`, `factory-reviewer-b` and `factory-reviewer-c`. **Fable seat (opt-in).** Seat A is `factory-reviewer-a`. When the environment sets `FACTORY_FABLE_SEAT=1`, spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent. Spawn more seats by reusing those agents when the design space is wide.
+Run one runner on each of `factory-reviewer-a` and `factory-reviewer-c`. **Fable seat (opt-in).** Seat A is `factory-reviewer-a`. When the environment sets `FACTORY_FABLE_SEAT=1`, spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent. Spawn more seats by reusing those agents when the design space is wide.
 
 **Grok seat (opt-in).** When the environment sets `FACTORY_GROK_SEAT=1`, add seat D on `factory-reviewer-grok`. It relays the same filled brief to the local `grok` CLI in headless mode through `tools/grok-review.sh` and is read-only. If the seat reports the CLI missing or unauthenticated, continue with the Anthropic seats and name the absence in the verdict. Agreement between the Grok seat and any Anthropic seat is cross-family agreement. Weight it above agreement among the Anthropic seats.
 
-Unless the Grok seat is active, seats A and B run the same model at the same effort and only seat C differs, by model, so weight a concrete structural objection over a majority opinion.
+Unless the Grok seat is active, seat A runs Opus and seat C runs Sonnet at the same effort, so weight a concrete structural objection over a majority opinion.
 
 Design it twice. Require at least two structurally distinct candidates before synthesis, even when the first looks sufficient. This is the **exhaust-the-design-space** principle skill made concrete. Whole-shape alternatives, not point fixes inside one shape.
 

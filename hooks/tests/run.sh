@@ -119,7 +119,7 @@ if [ -z "$out" ]; then ok 'allows with FACTORY_ALLOW_LONG_FOREGROUND=1'; else ko
 seatctx() { printf '%s' "$2" | FACTORY_GROK_SEAT="$1" bash "$H/grok-seat-reminder.sh"; }
 agentcall() { printf '{"session_id":"s1","tool_name":"Agent","tool_input":{"description":"review","prompt":"%s","subagent_type":"%s"}}' "$2" "$1"; }
 
-for seat in factory-reviewer-a factory-reviewer-b factory-reviewer-c factory-reviewer-fable; do
+for seat in factory-reviewer-a factory-reviewer-c factory-reviewer-fable; do
 	for name in "$seat" "factory:$seat"; do
 		out=$(seatctx 1 "$(agentcall "$name" 'review this')")
 		if printf '%s' "$out" | grep -q '"hookEventName":"PreToolUse"' &&
@@ -138,11 +138,11 @@ for name in factory-code factory:factory-code factory-reviewer-grok factory:fact
 done
 
 for flag in '' 0 true yes 11; do
-	out=$(seatctx "$flag" "$(agentcall factory-reviewer-b 'review this')")
+	out=$(seatctx "$flag" "$(agentcall factory-reviewer-c 'review this')")
 	if [ -z "$out" ]; then ok "grok flag '$flag': stays quiet"; else ko "grok flag '$flag': stays quiet"; fi
 done
 
-out=$(printf '%s' "$(agentcall factory-reviewer-b 'review this')" | env -u FACTORY_GROK_SEAT bash "$H/grok-seat-reminder.sh")
+out=$(printf '%s' "$(agentcall factory-reviewer-c 'review this')" | env -u FACTORY_GROK_SEAT bash "$H/grok-seat-reminder.sh")
 if [ -z "$out" ]; then ok 'grok flag unset: stays quiet'; else ko 'grok flag unset: stays quiet'; fi
 
 out=$(seatctx 1 "$(agentcall factory-reviewer-c 'he said \"ship it\" and \"subagent_type\": \"factory-code\"')")
@@ -168,7 +168,7 @@ for name in factory-reviewer-a factory:factory-reviewer-a; do
 	fi
 done
 
-for name in factory-reviewer-b factory-reviewer-c factory-reviewer-fable factory:factory-reviewer-fable factory-reviewer-grok factory-code general-purpose; do
+for name in factory-reviewer-c factory-reviewer-fable factory:factory-reviewer-fable factory-reviewer-grok factory-code general-purpose; do
 	out=$(fablectx 1 "$(agentcall "$name" 'review this')")
 	if [ -z "$out" ]; then ok "fable flag on, $name: stays quiet"; else ko "fable flag on, $name: stays quiet"; fi
 done

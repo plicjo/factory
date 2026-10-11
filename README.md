@@ -43,7 +43,7 @@ so they can prove a change works on the real app instead of claiming it.
 `/arena`, `/interrogate`, `/swarm`, `/tdd`, `/unslop` and `/deslop`, plus 24 principle skills
 that factory-mode reads by path and cites in replies. The principles stay out of the slash menu.
 
-**12 agents.** Each agent file pins its model, reasoning effort, tool limits and isolation, so a
+**11 agents.** Each agent file pins its model, reasoning effort, tool limits and isolation, so a
 playbook picks a role and never passes a model.
 
 | Agent | Role | Model and effort |
@@ -53,7 +53,7 @@ playbook picks a role and never passes a model.
 | `factory-hard` | Hardest changes, where a mistake is expensive | Opus, high |
 | `factory-explorer` | Read-only exploration | Sonnet, high |
 | `factory-synthesizer` | Read-only prose and judgment | Opus, high |
-| `factory-reviewer-a` / `-b` / `-c` | Review panel seats | Opus high, Opus high, Sonnet high |
+| `factory-reviewer-a` / `-c` | Review panel seats | Opus high, Sonnet high |
 | `factory-reviewer-fable` | Opt-in seat A on accounts with Fable access | Fable, high |
 | `factory-reviewer-grok` | Opt-in cross-family seat via the local grok CLI | Haiku transport, Grok 4.7 does the reviewing |
 | `factory-worker` | Swarm worker, isolated in its own git worktree | Sonnet, high |

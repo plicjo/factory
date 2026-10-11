@@ -1,6 +1,6 @@
 ---
 name: factory-reviewer-c
-description: Adversarial review panelist C. Third seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
+description: Adversarial review panelist C. Second seat on interrogate, architect and arena panels. Reviews a design or diff against the stated intent and the rubric, read-only.
 model: sonnet
 effort: high
 background: true

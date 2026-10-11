@@ -39,7 +39,6 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 | Seat | Agent |
 |------|-------|
 | Reviewer A | `factory-reviewer-a` |
-| Reviewer B | `factory-reviewer-b` |
 | Reviewer C | `factory-reviewer-c` |
 
 **Fable seat (opt-in).** Seat A is `factory-reviewer-a`. When the environment sets `FACTORY_FABLE_SEAT=1`, spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent.
@@ -49,7 +48,7 @@ Never pass `model`, it lives in each agent's definition under `agents/`.
 Add a fourth or fifth seat by reusing these agents when the design is
 contested enough to warrant it.
 
-Unless the Grok seat is active, seats A and B run the same model at the same effort and only seat C differs, by model. That makes
+Unless the Grok seat is active, seat A runs Opus and seat C runs Sonnet at the same effort. That makes
 agreement between them weaker evidence than upstream's cross-family panel.
 Treat a concrete reproducible defect from one seat as outranking agreement
 between the other two, and say so in the verdict when the panel splits that way.

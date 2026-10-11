@@ -98,7 +98,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 | Hardest changes: cross-cutting design, gnarly concurrency, subtle algorithms, or a precise sequence to execute to the letter | `factory-hard` |
 | Read-only exploration of one angle (`how` explorers, `why` investigators) | `factory-explorer` |
 | Prose, judgment, synthesis (`how` explainer, `why` synthesizer) | `factory-synthesizer` |
-| Review panel seats (`interrogate`, `architect`, `arena`) | `factory-reviewer-a`, `factory-reviewer-b`, `factory-reviewer-c` |
+| Review panel seats (`interrogate`, `architect`, `arena`) | `factory-reviewer-a`, `factory-reviewer-c` |
 | Parallel fan-out slices (`swarm`) | `factory-worker` |
 | Opt-in cross-family seat and judge (panel seat D, arena and eval judge, trail review, reflect divergent lens) | `factory-reviewer-grok` |
 
@@ -108,7 +108,7 @@ Code delegates tier by difficulty. Trivial mechanical edits and ordinary scoped 
 
 Every agent already runs in the background, so don't pass a background flag. `factory-worker` already isolates into its own worktree. Pass file pointers, not inlined context.
 
-**Panel diversity is weaker here than upstream.** By default every seat is an Anthropic model at the same reasoning effort. Seats A and B both run Opus and seat C runs Sonnet, so the panel varies by model only, and only across seat C. Agreement across them is real but lower-signal than agreement across families. When the environment sets `FACTORY_GROK_SEAT=1`, the panel skills add an opt-in seat on `factory-reviewer-grok`, which runs on Grok through the local `grok` CLI and restores one cross-family seat. Weight a concrete reproducible defect over a consensus of opinions.
+**Panel diversity is weaker here than upstream.** By default every seat is an Anthropic model at the same reasoning effort. Seat A runs Opus and seat C runs Sonnet, so the panel varies by model only. Agreement across them is real but lower-signal than agreement across families. When the environment sets `FACTORY_GROK_SEAT=1`, the panel skills add an opt-in seat on `factory-reviewer-grok`, which runs on Grok through the local `grok` CLI and restores one cross-family seat. Weight a concrete reproducible defect over a consensus of opinions.
 
 **Parallel work stays legible.** Before fanning out, decide where each PR starts and stops and which PRs depend on which. No two streams touch the same code. When the in-flight work changes, report one table: PR, state, and the user's next action. Group it as waiting on you, in progress, and optional.
 

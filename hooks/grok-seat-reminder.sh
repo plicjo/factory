@@ -9,7 +9,7 @@ input=$(cat)
 seat=$(printf '%s' "$input" | sed -n 's/.*"subagent_type" *: *"\([^"]*\)".*/\1/p' | head -n1)
 
 case "${seat#factory:}" in
-	factory-reviewer-a | factory-reviewer-b | factory-reviewer-c | factory-reviewer-fable) ;;
+	factory-reviewer-a | factory-reviewer-c | factory-reviewer-fable) ;;
 	*) exit 0 ;;
 esac
 
