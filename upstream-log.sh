@@ -4,7 +4,8 @@ set -euo pipefail
 BASE="978ca6e9c0e012047cd5058b8e829240336e704e"
 DIR="${TMPDIR:-/tmp}/pstack-upstream"
 
-if [ ! -d "$DIR" ]; then
+if ! git -C "$DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  rm -rf "$DIR"
   git clone -q --filter=blob:none --no-checkout \
     https://github.com/cursor/plugins.git "$DIR"
 else
