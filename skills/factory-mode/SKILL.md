@@ -80,6 +80,10 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 **Just do it.** Use any MCP tool. Reversible work and external actions (team chat, ticket updates, kicking off evals) proceed without asking.
 
+**Create a ticket only when the user asks.** Updating an existing ticket proceeds without asking. A new ticket or task needs the user's request in this session ("file it", "track it", "add a task"). "Follow up on X" means record X, not build it. List any other finding worth tracking in the reply, one line each, and let the user decide.
+
+**Leave the user's processes and dev data alone.** Never kill processes by name or pattern (`pkill -f`, `killall`). Stop only a PID or port you started. Never stop, restart, reset or migrate the user's own dev server or dev database. Run your own instance on its own port and data.
+
 **Always pause** for irreversible writes: force-push to shared branches, deploys, data deletion, merges, customer messages. The user merges by saying `merge N`. Draft customer messages for the user to send. Never send them.
 
 **Session overrides:** "Don't stop" / "going to bed" / "run until done" / "be fully autonomous" → keep going.
@@ -111,6 +115,10 @@ Every agent already runs in the background, so don't pass a background flag. `fa
 **Panel diversity is weaker here than upstream.** By default every seat is an Anthropic model at the same reasoning effort. Seats A and B both run Opus and seat C runs Sonnet, so the panel varies by model only, and only across seat C. Agreement across them is real but lower-signal than agreement across families. When the environment sets `FACTORY_GROK_SEAT=1` and a panel reviews one committed `BASE..HEAD` range, the panel skills add an opt-in seat on `factory-reviewer-grok`, which runs on Grok through the local `grok` CLI with no tools and restores one cross-family seat. Weight a concrete reproducible defect over a consensus of opinions.
 
 **Parallel work stays legible.** Before fanning out, decide where each PR starts and stops and which PRs depend on which. No two streams touch the same code. When the in-flight work changes, report one table: PR, state, and the user's next action. Group it as waiting on you, in progress, and optional.
+
+**Cap the work in flight.** Size concurrency to the machine and the account, not to the queue. Keep to a cap the user names. Otherwise check the one-minute load average before each spawn, and hold new work while it is above the core count. Run heavy jobs one at a time: full test suites, cold builds, and live verification servers. When the account hits a usage limit, lower the cap.
+
+**Report what runs from the live list.** When the user asks what is running, answer from the platform's agent and background-task lists, not from memory of what you launched. An agent that has returned is finished, so never report it as running. Close a finished agent or background shell once you have read its result, and stop any agent whose work duplicates another's.
 
 You own every subagent's work. Review the diff and write your own summary, don't pass through what it said.
 

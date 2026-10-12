@@ -65,7 +65,7 @@ Ported files with content changes beyond the name substitutions.
 |---|---|
 | `README.md` | Rewritten for Claude Code install, with a fork notice and the sync base. |
 | `docs/guide/` (all 10 chapters and the index) | Rewritten for Claude Code. Setup, model choice, `factory-help`, and Cursor-only automation material are cut. |
-| `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents, the Fable seat and the opt-in Grok seat. Drops the Orchestrate playbook and the Cursor-only triggers. |
+| `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents, the Fable seat and the opt-in Grok seat. Drops the Orchestrate playbook and the Cursor-only triggers. Autonomy creates tickets only on request and leaves the user's own processes and dev data alone. Subagents caps work in flight and reports what runs from the live list. |
 | `agents/factory-agent.md` | Claude frontmatter for background, model, effort and the preloaded skill. |
 | `agents/comment-sicko.md` | Name lowercased to match Claude agent naming. |
 | `skills/principle-*/SKILL.md` (all 24) | `user-invocable: false` hides them from the slash menu. |
@@ -76,7 +76,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/how/SKILL.md`, `skills/why/SKILL.md`, `skills/swarm/SKILL.md` | Spawns name `factory-explorer`, `factory-synthesizer` or `factory-worker` instead of model lines. |
 | `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Arena and interrogate add the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1` and the subject is one committed range. Architect and reflect name why the seat does not run there. |
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
-| `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, and `deslop` by name. |
+| `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, `deslop` by name, and a line on each screenshot saying what it proves. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |
 | `skills/factory-mode/playbooks/autopilot-full.md`, `autopilot-stack.md`, `shipping.md` | Owners are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. Autopilot-full step 4 sizes the review swarm to the change risk. |
 | `skills/factory-mode/playbooks/autonomous-run.md` | Uses the Claude Code `/loop` command and `AskUserQuestion`. |
@@ -91,4 +91,4 @@ Ported files with content changes beyond the name substitutions.
 | `skills/recall/SKILL.md`, `skills/show-me-your-work/SKILL.md` | Read Claude Code sessions, and `recall` fans out to `factory-explorer`. The trail reviewer stays on Anthropic models. |
 | `skills/automate-me/SKILL.md` | Claude paths, `AskUserQuestion`, and the authoring playbook instead of `create-skill`. |
 | `skills/no-comments/SKILL.md` | Spawns `factory:comment-sicko` through the `Agent` tool. |
-| `skills/create-verification-skill/SKILL.md`, `skills/maintain-verification-skill/SKILL.md` | Verify skills live under `.claude/skills/`. |
+| `skills/create-verification-skill/SKILL.md`, `skills/maintain-verification-skill/SKILL.md` | Verify skills live under `.claude/skills/`. Create-verification-skill launches on seeded data and treats a fixed sleep in a drive as a defect. |
