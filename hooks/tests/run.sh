@@ -112,6 +112,12 @@ if [ -z "$out" ]; then ok 'allows a missing timeout'; else ko 'allows a missing 
 out=$(longcmd '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"echo \"run_in_background\": true","timeout":200000}}')
 if denies "$out"; then ok 'denies when only the command text names run_in_background'; else ko 'denies when only the command text names run_in_background'; fi
 
+out=$(longcmd '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"\"${CLAUDE_PLUGIN_ROOT}/tools/grok-review.sh\" \"$BRIEF_FILE\" /r a b","timeout":600000}}')
+if [ -z "$out" ]; then ok 'allows grok-review.sh in the foreground, since it ends itself before the Bash limit'; else ko 'allows grok-review.sh in the foreground, since it ends itself before the Bash limit'; fi
+
+out=$(longcmd '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"sleep 300","description":"wait like grok-review.sh","timeout":200000}}')
+if denies "$out"; then ok 'denies when only the description names grok-review.sh'; else ko 'denies when only the description names grok-review.sh'; fi
+
 out=$(printf '%s' '{"session_id":"s1","tool_name":"Bash","tool_input":{"command":"sleep 300","timeout":200000}}' |
 	FACTORY_ALLOW_LONG_FOREGROUND=1 bash "$H/background-long-commands.sh")
 if [ -z "$out" ]; then ok 'allows with FACTORY_ALLOW_LONG_FOREGROUND=1'; else ko 'allows with FACTORY_ALLOW_LONG_FOREGROUND=1'; fi
@@ -187,125 +193,128 @@ if [ -z "$out" ]; then ok 'fable flag on: an escaped subagent_type in the prompt
 fakebin="$T/fakebin"
 mkdir -p "$fakebin"
 printf 'brief' >"$T/brief"
-fakegrok() {
-	{
-		printf '#!/bin/sh\nprintf "%%s\\n" "$@" >"%s"\nprev=""\nfor a in "$@"; do\n' "$T/argv"
-		printf '\t[ "$prev" = --prompt-file ] && cp "$a" "%s"\n' "$T/sent"
-		printf '\t[ "$prev" = --max-turns ] && printf %%s "$a" >"%s"\n\tprev=$a\ndone\n' "$T/turns"
-		printf 'cat <<'"'"'EOF'"'"'\n%s\nEOF\n' "$1"
-	} >"$fakebin/grok"
-	chmod +x "$fakebin/grok"
-}
-grokreview() { PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" 2>"$T/err"; }
 
-fakegrok '{"type":"text","data":"## Findings\n"}
-{"type":"text","data":"none"}
-{"type":"end","stopReason":"end_turn"}'
-out=$(grokreview); code=$?
-if [ "$code" -eq 0 ] && printf '%s' "$out" | grep -q 'none'; then ok 'grok review relays the reply on end_turn'; else ko 'grok review relays the reply on end_turn'; fi
-
-fakegrok '{"type":"text","data":"I will read the README first."}
-{"type":"tool_call","toolCallId":"c1","rawInput":{"command":"cat README.md"}}
-{"type":"tool_call_update","toolCallId":"c1","status":"completed"}
-{"type":"text","data":"## Findings\n"}
-{"type":"text","data":"none"}
-{"type":"end","stopReason":"end_turn"}'
-out=$(grokreview); code=$?
-if [ "$code" -eq 0 ] && [ "$out" = "## Findings
-none" ]; then ok 'grok review relays only the reply after the last tool call'; else ko 'grok review relays only the reply after the last tool call'; fi
-
-if [ "$(cat "$T/turns")" = 60 ] && grep -q 'starts with VERDICT:' "$T/sent" && grep -q '^brief$' "$T/sent"; then
-	ok 'grok review caps at 60 turns and sends the verdict instruction ahead of the brief'
-else
-	ko 'grok review caps at 60 turns and sends the verdict instruction ahead of the brief'
-fi
-
-fakegrok '{"type":"text","data":"I will review"}
-{"type":"tool_call","toolCallId":"c1","rawInput":{"command":"python --version"}}
-{"type":"tool_call_update","toolCallId":"c1","status":"failed","content":[{"type":"content","content":{"type":"text","text":"User cancelled"}}]}
-{"type":"end","stopReason":"cancelled"}'
-out=$(grokreview); code=$?
-if [ "$code" -eq 5 ] && [ -z "$out" ] && grep -q 'stopReason cancelled.*python --version' "$T/err"; then
-	ok 'grok review exits 5 and names the failed call on a cancelled session'
-else
-	ko 'grok review exits 5 and names the failed call on a cancelled session'
-fi
-
-fakegrok '{"type":"end","stopReason":"end_turn"}'
-grokreview >/dev/null
-if grep -qx 'Write' "$T/argv" || grep -qx 'Edit' "$T/argv"; then
-	ko 'grok review denies no tool by name, since that cancels piped rg'
-else
-	ok 'grok review denies no tool by name, since that cancels piped rg'
-fi
-if grep -Fqx 'Bash(touch *)' "$T/argv" && grep -Fqx 'Bash(*>*)' "$T/argv" && grep -Fqx 'Bash(rg *)' "$T/argv" && grep -q 'Join them with a pipe' "$T/sent"; then
-	ok 'grok review denies shell writes and allows pipes between read-only commands'
-else
-	ko 'grok review denies shell writes and allows pipes between read-only commands'
-fi
-
-bare_ok=1
-for cmd in 'git status' 'git fetch' 'ls' 'gh pr view' 'gh pr diff'; do
-	grep -Fqx "Bash($cmd)" "$T/argv" || bare_ok=0
-done
-if [ "$bare_ok" -eq 1 ]; then
-	ok 'grok review allows bare git status, git fetch, ls and gh pr view, since a chain with one is cancelled otherwise'
-else
-	ko 'grok review allows bare git status, git fetch, ls and gh pr view, since a chain with one is cancelled otherwise'
-fi
-
-fakegrok '{"type":"text","data":"partial"}'
-out=$(grokreview); code=$?
-if [ "$code" -eq 5 ]; then ok 'grok review exits 5 when the stream has no end event'; else ko 'grok review exits 5 when the stream has no end event'; fi
+G="$T/repo"
+commit() { git -C "$G" add -A && git -C "$G" -c user.email=t@t -c user.name=t commit -qm "$1" && git -C "$G" rev-parse HEAD; }
+git init -q "$G"
+printf 'old\n' >"$G/small.txt"
+awk 'BEGIN { for (i = 0; i < 60; i++) printf "%049d\n", i }' >"$G/big.txt"
+base=$(commit 'Start')
+printf 'new small\n' >"$G/small.txt"
+sed -i.bak '1s/.*/changed/' "$G/big.txt" && rm "$G/big.txt.bak"
+printf 'a\000b' >"$G/bin.dat"
+tip=$(commit 'Change two files')
+bigsize=$(git -C "$G" cat-file -s "$tip:big.txt")
 
 cat >"$fakebin/grok" <<EOF
 #!/bin/sh
+printf '%s\n' "\$@" >"$T/argv"
 prev=""
+resumed=""
 for a in "\$@"; do
-	[ "\$prev" = --resume ] && printf %s "\$a" >"$T/resumed"
-	[ "\$prev" = --prompt-file ] && cp "\$a" "$T/sent"
+	[ "\$prev" = --resume ] && resumed=\$a
+	[ "\$prev" = --prompt-file ] && cp "\$a" "$T/sent\${resumed:+.resume}"
 	prev=\$a
 done
-if [ -f "$T/resumed" ]; then
-	printf '%s\n' '{"type":"text","data":"none"}' '{"type":"end","stopReason":"end_turn","sessionId":"s1"}'
-else
-	printf '%s\n' '{"type":"tool_call","toolCallId":"c1","rawInput":{"command":"rg x --glob \\"*.ex\\""}}' \\
-		'{"type":"tool_call_update","toolCallId":"c1","status":"failed","content":[{"type":"content","content":{"type":"text","text":"User cancelled"}}]}' \\
-		'{"type":"end","stopReason":"cancelled","sessionId":"s1"}'
-fi
+if [ -n "\$resumed" ]; then printf %s "\$resumed" >"$T/resumed"; cat "$T/stream.resume"; else cat "$T/stream.first"; fi
 EOF
-rm -f "$T/resumed"
-out=$(grokreview); code=$?
-if [ "$code" -eq 0 ] && [ "$out" = none ] && [ "$(cat "$T/resumed")" = s1 ] && grep -Fq 'rg x --glob "*.ex"' "$T/sent"; then
-	ok 'grok review resumes a cancelled session, names the refused command, and relays the reply'
-else
-	ko 'grok review resumes a cancelled session, names the refused command, and relays the reply'
-fi
-if grep -q 'resume 1 after a refused command: rg x' "$T/err"; then
-	ok 'grok review logs each refused command on resume'
-else
-	ko 'grok review logs each refused command on resume'
-fi
-
+chmod +x "$fakebin/grok"
+streams() { printf '%s\n' "$1" >"$T/stream.first" && printf '%s\n' "${2:-}" >"$T/stream.resume" && rm -f "$T/resumed" "$T/sent.resume"; }
+grokreview() { PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" "$G" "$base" "$tip" 2>"$T/err"; }
 argafter() { grep -A1 -Fx -- "$1" "$T/argv" | sed -n 2p; }
-fakegrok '{"type":"end","stopReason":"end_turn"}'
-grokreview >/dev/null
+done_turn='{"type":"end","stopReason":"end_turn","sessionId":"s1"}'
+
+streams '{"type":"text","data":"## Findings\nnone\n"}
+{"type":"text","data":"VERDICT: ship"}'"
+$done_turn"
+out=$(grokreview); code=$?
+if [ "$code" -eq 0 ] && [ "$out" = "## Findings
+none
+VERDICT: ship" ]; then ok 'grok review relays the reply on end_turn'; else ko "grok review relays the reply on end_turn (exit $code)"; fi
 if [ ! -s "$T/err" ]; then ok 'grok review writes nothing to stderr on a clean finish'; else ko "grok review writes nothing to stderr on a clean finish: $(cat "$T/err")"; fi
-if [ "$(argafter --reasoning-effort)" = low ] && [ "$(argafter --cwd)" = "$PWD" ]; then
-	ok 'grok review runs at low effort in the current directory by default'
+
+if grep -q '^You have no tools in this session' "$T/sent" && grep -qx 'brief' "$T/sent" && grep -q 'Change two files' "$T/sent" &&
+	grep -qx '+new small' "$T/sent" && grep -Fqx "===== FILE small.txt AT $tip =====" "$T/sent" &&
+	grep -Fqx "===== FILE big.txt AT $tip =====" "$T/sent" && grep -qx 'changed' "$T/sent" && grep -qx "$(sed -n '$p' "$G/big.txt")" "$T/sent" &&
+	grep -qx 'Binary file or submodule, not shown: bin.dat' "$T/sent"; then
+	ok 'grok review sends the no-tools rule, the brief, the log, the diff and the changed files in the prompt'
 else
-	ko 'grok review runs at low effort in the current directory by default'
+	ko 'grok review sends the no-tools rule, the brief, the log, the diff and the changed files in the prompt'
 fi
 
-PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 FACTORY_GROK_EFFORT=medium bash "$H/../tools/grok-review.sh" "$T/brief" "$T" >/dev/null 2>"$T/err"
-if [ "$(argafter --reasoning-effort)" = medium ] && [ "$(argafter --cwd)" = "$T" ]; then
-	ok 'grok review takes FACTORY_GROK_EFFORT and starts in the DIR argument'
+if [ "$(argafter --tools)" = todo_write ] && [ "$(argafter --disallowed-tools)" = todo_write,search_tool,use_tool ] &&
+	! grep -qx -- '--allow' "$T/argv" && grep -qx -- '--verbatim' "$T/argv" &&
+	[ "$(argafter --reasoning-effort)" = low ] && [ "$(argafter --cwd)" = "$G" ]; then
+	ok 'grok review removes every tool, allows no command, sends the prompt verbatim, and runs at low effort in DIR'
 else
-	ko 'grok review takes FACTORY_GROK_EFFORT and starts in the DIR argument'
+	ko 'grok review removes every tool, allows no command, sends the prompt verbatim, and runs at low effort in DIR'
 fi
 
-PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" "$T/missing" >/dev/null 2>"$T/err"; code=$?
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 FACTORY_GROK_MAX_BYTES=4000 bash "$H/../tools/grok-review.sh" "$T/brief" "$G" "$base" "$tip" >/dev/null 2>"$T/err"
+if grep -Fqx "===== FILE small.txt AT $tip =====" "$T/sent" && ! grep -q '===== FILE big.txt' "$T/sent" &&
+	grep -q "largest files first: big.txt ($bigsize bytes)$" "$T/sent" && grep -qx -- '-old' "$T/sent"; then
+	ok 'grok review leaves out the largest file over the size cap, keeps the diff, and names the cut'
+else
+	ko 'grok review leaves out the largest file over the size cap, keeps the diff, and names the cut'
+fi
+
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 FACTORY_GROK_MAX_BYTES=1 bash "$H/../tools/grok-review.sh" "$T/brief" "$G" "$base" "$tip" >/dev/null 2>"$T/err"
+if grep -q '^\[diff cut for size after 0 of [0-9]* bytes\]$' "$T/sent" && ! grep -q '===== FILE' "$T/sent"; then
+	ok 'grok review cuts the diff itself and says so when the diff alone passes the cap'
+else
+	ko 'grok review cuts the diff itself and says so when the diff alone passes the cap'
+fi
+
+streams '{"type":"text","data":"I will read the file."}
+{"type":"tool_call","toolCallId":"c1","toolName":"read_file","rawInput":{"path":"small.txt"}}
+{"type":"tool_call_update","toolCallId":"c1","status":"failed"}'"
+$done_turn" '{"type":"text","data":"none\nVERDICT: ship"}'"
+$done_turn"
+out=$(grokreview); code=$?
+if [ "$code" -eq 0 ] && [ "$out" = "none
+VERDICT: ship" ] && [ "$(cat "$T/resumed")" = s1 ] && grep -q 'has no tools' "$T/sent.resume" &&
+	grep -q 'resume after a tool call: read_file' "$T/err"; then
+	ok 'grok review resumes once after a tool call, says it has no tools, and relays the resumed reply'
+else
+	ko "grok review resumes once after a tool call, says it has no tools, and relays the resumed reply (exit $code)"
+fi
+
+call='{"type":"tool_call","toolCallId":"c1","toolName":"run_terminal_command","rawInput":{"command":"git log"}}'
+streams "$call
+$done_turn" "$call
+$done_turn"
+out=$(grokreview); code=$?
+if [ "$code" -eq 5 ] && [ -z "$out" ] && grep -q 'tool calls run_terminal_command, 1 resumes' "$T/err"; then
+	ok 'grok review exits 5 when Grok still calls a tool after the resume'
+else
+	ko "grok review exits 5 when Grok still calls a tool after the resume (exit $code)"
+fi
+
+streams '{"type":"text","data":"partial"}'
+out=$(grokreview); code=$?
+if [ "$code" -eq 5 ] && grep -q 'stopReason none' "$T/err"; then ok 'grok review exits 5 when the stream has no end event'; else ko 'grok review exits 5 when the stream has no end event'; fi
+
+streams '{"type":"text","data":"looks fine"}'"
+$done_turn"
+out=$(grokreview); code=$?
+if [ "$code" -eq 7 ] && [ -z "$out" ] && grep -q 'no VERDICT line.*looks fine' "$T/err"; then
+	ok 'grok review exits 7 when the reply has no VERDICT line'
+else
+	ko "grok review exits 7 when the reply has no VERDICT line (exit $code)"
+fi
+
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 FACTORY_GROK_EFFORT=medium bash "$H/../tools/grok-review.sh" "$T/brief" "$G" "$base" "$tip" >/dev/null 2>"$T/err"
+if [ "$(argafter --reasoning-effort)" = medium ]; then ok 'grok review takes FACTORY_GROK_EFFORT'; else ko 'grok review takes FACTORY_GROK_EFFORT'; fi
+
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" "$T/missing" "$base" "$tip" >/dev/null 2>"$T/err"; code=$?
 if [ "$code" -eq 4 ] && grep -q 'review directory missing' "$T/err"; then ok 'grok review exits 4 on a missing DIR'; else ko 'grok review exits 4 on a missing DIR'; fi
+
+PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" "$T/brief" "$G" >/dev/null 2>"$T/err"; code=$?
+if [ "$code" -eq 4 ] && grep -q 'usage: grok-review.sh BRIEF DIR BASE HEAD' "$T/err"; then
+	ok 'grok review exits 4 without a BASE and HEAD range'
+else
+	ko 'grok review exits 4 without a BASE and HEAD range'
+fi
 
 printf '#!/bin/sh\nexec sleep 30\n' >"$fakebin/grok" && chmod +x "$fakebin/grok"
 start=$(date +%s)

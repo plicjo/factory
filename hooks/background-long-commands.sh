@@ -2,11 +2,14 @@
 # A foreground command blocks the session, so the user cannot talk to the agent until it
 # exits. The agent raises the Bash timeout above its 2-minute default only when it expects
 # a long wait, which makes that timeout the signal to run the command in the background.
+# grok-review.sh is exempt: it ends itself within FACTORY_GROK_TIMEOUT, under the Bash tool's
+# 10-minute limit, and a transport agent that backgrounds it can only poll until it exits.
 set -euo pipefail
 
 input=$(cat)
 
 [ "${FACTORY_ALLOW_LONG_FOREGROUND:-}" = "1" ] && exit 0
+printf '%s' "$input" | grep -qE '"command" *: *"([^"\\]|\\.)*grok-review\.sh' && exit 0
 printf '%s' "$input" | grep -qE '"run_in_background" *: *true' && exit 0
 
 timeout=$(printf '%s' "$input" | sed -n 's/.*"timeout" *: *\([0-9][0-9]*\).*/\1/p' | head -n1)

@@ -14,5 +14,5 @@ case "${seat#factory:}" in
 esac
 
 cat <<'JSON'
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"FACTORY_GROK_SEAT=1 is set, so this panel must also spawn a seat on factory-reviewer-grok with the same brief. If this panel already has that seat, ignore this reminder."}}
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"FACTORY_GROK_SEAT=1 is set. When this panel reviews one committed BASE..HEAD range, it must also spawn a seat on factory-reviewer-grok with the same brief, and that brief must name the repository directory and the range. Grok has no tools, so skip the seat for any other subject. If this panel already has that seat, ignore this reminder."}}
 JSON
