@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # What has changed in upstream pstack since my last sync.
 set -euo pipefail
-BASE="978ca6e9c0e012047cd5058b8e829240336e704e"
+BASE="7845807642f9ef234a0ec5b4067fa3f11fd92a85"
 DIR="${TMPDIR:-/tmp}/pstack-upstream"
 
 if ! git -C "$DIR" rev-parse --git-dir >/dev/null 2>&1; then
