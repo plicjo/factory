@@ -3,8 +3,8 @@
 This file records every intentional divergence from upstream pstack.
 
 - Upstream is `pstack/` in [cursor/plugins](https://github.com/cursor/plugins).
-- The recorded sync base is `978ca6e9c0e012047cd5058b8e829240336e704e`, the `BASE` in `upstream-log.sh`.
-- The compared snapshot is `978ca6e9c0e012047cd5058b8e829240336e704e`, the upstream head when this file was written.
+- The recorded sync base is `7845807642f9ef234a0ec5b4067fa3f11fd92a85`, the `BASE` in `upstream-log.sh`.
+- The compared snapshot is `7845807642f9ef234a0ec5b4067fa3f11fd92a85`, the upstream head when this file was written.
 - A file absent from the tables below matches upstream apart from the name substitutions. `poteto-mode` is `factory-mode`, `poteto-agent` is `factory-agent`, and prose says factory instead of poteto.
 - The `deslop` skill is vendored from cursor-team-kit, not pstack. Its license is in `LICENSE-cursor-team-kit`.
 - A PR that changes a ported file, or adds or drops one, updates its row here. The `forks` CI job runs `tools/check-forks.py` and fails on an undeclared divergence. After a sync, bump the snapshot SHA above and rerun it.
@@ -16,6 +16,7 @@ Upstream files not ported. Paths are upstream paths.
 | Path | Reason |
 |---|---|
 | `.cursor-plugin/plugin.json` | Cursor plugin manifest. `.claude-plugin/` replaces it. |
+| `plugin.json` | Agent Plugins v1 root manifest. `.claude-plugin/` replaces it. |
 | `automations/benny/` | Cursor automations for Slack issue reports. Nothing here runs them. |
 | `skills/poteto-help/` | Onboarding help for pstack. The guide covers setup here. |
 | `skills/setup-pstack/` | Wrote a Cursor model rule. Models now live in each agent definition under `agents/`. |
@@ -47,7 +48,7 @@ Files with no upstream counterpart.
 | `hooks/fable-seat-reminder.sh` | Tells a seat A spawn to run on Fable when `FACTORY_FABLE_SEAT=1`. |
 | `hooks/prune-merged.sh` | Starts the branch and worktree sweep in the background at session start. |
 | `hooks/tests/run.sh` | Tests the hooks. |
-| `.github/workflows/ci.yml` | Runs the hook tests, the watch-pr tests and typecheck, and the port checks. |
+| `.github/workflows/ci.yml` | Runs the hook tests, the script tests and typecheck, and the port checks. |
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
 | `tools/check-forks.py` | Fails CI when the repo diverges from upstream without a row here. |
 | `tools/prune-merged.sh` | Deletes landed and empty local branches and their clean, idle worktrees, with `--dry-run` to preview. |
@@ -66,8 +67,7 @@ Ported files with content changes beyond the name substitutions.
 | `README.md` | Rewritten for Claude Code install, with a fork notice and the sync base. |
 | `docs/guide/` (all 10 chapters and the index) | Rewritten for Claude Code. Setup, model choice, `factory-help`, and Cursor-only automation material are cut. |
 | `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents, the Fable seat and the opt-in Grok seat. Drops the Orchestrate playbook and the Cursor-only triggers. Autonomy creates tickets only on request and leaves the user's own processes and dev data alone. Subagents caps work in flight and reports what runs from the live list. |
-| `agents/factory-agent.md` | Claude frontmatter for background, model, effort and the preloaded skill. |
-| `agents/comment-sicko.md` | Name lowercased to match Claude agent naming. |
+| `agents/factory-agent.md` | Claude frontmatter for background, model, effort and the preloaded skill. The body names `Agent` spawns instead of `Task`. |
 | `skills/principle-*/SKILL.md` (all 24) | `user-invocable: false` hides them from the slash menu. |
 | `skills/principle-laziness-protocol/SKILL.md` | Adds the reuse rule and widens the trigger to any code change. |
 | `skills/principle-fix-root-causes/SKILL.md` | Adds two bullets on guards and downstream patches. |

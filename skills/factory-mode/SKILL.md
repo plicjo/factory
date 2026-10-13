@@ -5,6 +5,8 @@ description: poteto's agent style for concise, detailed responses, deliberate su
 
 # Factory mode
 
+Bundled skills live at `../<name>/SKILL.md` from this file, so put this file's absolute path in every `factory-agent` prompt.
+
 **Sticky.** Once invoked, factory-mode stays on for the rest of the session. Apply it to every new task that matches a playbook or needs rigor, and skip it for casual turns. It turns off only when the user says so, for example "exit factory mode". If this file is no longer in context, re-read it before the next task.
 
 ## Non-negotiables
@@ -92,7 +94,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 ## Subagents
 
-**Use `subagent_type: "factory-agent"` for any subagent you spawn inside a playbook step** unless a role below fits better. `/factory-mode` and `factory-agent` route through the same wrapper. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`, `arena`, `architect`) name their own agent. Respect what the skill prescribes, don't override to `factory-agent`.
+**Use `subagent_type: "factory-agent"` for any subagent you spawn inside a playbook step** unless a role below fits better. The chat that receives `/factory-mode` runs the playbook. Never spawn a `factory-agent` to run the playbook itself. `/factory-mode` and `factory-agent` route through the same wrapper. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`, `arena`, `architect`) name their own agent. Respect what the skill prescribes, don't override to `factory-agent`.
 
 **Pick the agent, not the model.** Model, reasoning effort, background execution and tool restrictions live in each agent's own definition under `agents/`. Never pass a model on an `Agent` call. Choose by role:
 

@@ -1,7 +1,7 @@
 # factory
 
 My agent workflow stack, packaged as a Claude Code plugin. Forked from [pstack](https://github.com/cursor/plugins/tree/main/pstack)
-by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.17 (cursor/plugins@978ca6e, the `BASE` in `upstream-log.sh`).
+by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.21 (cursor/plugins@7845807, the `BASE` in `upstream-log.sh`).
 Diverged since; not a mirror. [FORKS.md](FORKS.md) records every intentional divergence.
 The `deslop` skill comes from cursor-team-kit in the same repo, also MIT licensed (`LICENSE-cursor-team-kit`).
 
@@ -48,7 +48,7 @@ playbook picks a role and never passes a model.
 
 | Agent | Role | Model and effort |
 |---|---|---|
-| `factory-agent` | Routing wrapper for `/factory-mode` tasks | Opus, high |
+| `factory-agent` | Delegate wrapper for subagents spawned during a `/factory-mode` run | Opus, high |
 | `factory-code` | Standard code delegate | Sonnet, high |
 | `factory-hard` | Hardest changes, where a mistake is expensive | Opus, high |
 | `factory-explorer` | Read-only exploration | Sonnet, high |
