@@ -23,6 +23,8 @@ In every project you use factory in, run this before your first task:
 
 [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md) generates `.claude/skills/verify-<app>/`, a project skill that drives your app the way a user does. Without it, agents can't prove a change works on the real app, and most factory-mode playbooks end in that proof. It proves the skill works once before handing it over. [Verify and ship](./06-verify-and-ship.md#create-a-project-verification-skill) covers what it generates.
 
+If your code has concurrency, retries, a state machine, or a parser, also run [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md). Tests check the cases someone thought to write. A formal verification skill checks one key property of your code, such as "a job never runs twice at once", in every case within a stated scope. [Verify and ship](./06-verify-and-ship.md#prove-a-property-with-a-formal-verification-skill) covers it.
+
 ## Run your first task
 
 Pick something real but small, and describe it the way you'd describe it to a colleague:
