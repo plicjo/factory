@@ -32,7 +32,7 @@ Never pass `model`. It lives in each agent's definition under `agents/`.
 | Tooling | `factory-reviewer-c` | `references/tooling-reviewer.md` |
 | Divergent | `factory-reviewer-b` | `references/divergent-reviewer.md` |
 
-The Divergent lens stays on `factory-reviewer-b` even when `FACTORY_GROK_SEAT=1`. The Grok seat has no tools and reviews only a committed `BASE..HEAD` range, so it cannot read a transcript.
+The Divergent lens stays on `factory-reviewer-b` even when `FACTORY_GROK_SEAT=1`. The Grok seat has no tools and sees only the files its brief names, so it cannot search a transcript, and a whole transcript does not fit its prompt.
 
 Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Agent` response body.
 

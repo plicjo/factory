@@ -1,22 +1,32 @@
 #!/usr/bin/env bash
-# Single chokepoint for the opt-in Grok review seat. Refuses to run unless
+# Single chokepoint for the opt-in Grok seat. Refuses to run unless
 # FACTORY_GROK_SEAT=1 so environments that must not send code to non-Anthropic
 # vendors never reach the CLI.
 # Grok runs with no tools. Every allowlist of read-only shell commands still let some command through
 # that grok refused, which cancelled the session, so the script builds the whole review context itself
 # and Grok reads only the prompt.
-# Usage: grok-review.sh BRIEF DIR BASE HEAD. The prompt carries the brief, then git log BASE..HEAD,
-# git diff BASE HEAD and the full text at HEAD of each changed file, cut to FACTORY_GROK_MAX_BYTES
-# (default 400000) by leaving out the largest files first. The prompt names what was cut.
+# Usage: grok-review.sh BRIEF DIR BASE HEAD, or grok-review.sh --files BRIEF DIR FILE...
+# With a range the prompt carries the brief, then git log BASE..HEAD, git diff BASE HEAD and the full
+# text at HEAD of each changed file. With --files it carries the brief, then the full text of each FILE
+# as it is on disk, relative to DIR unless absolute. Either way it is cut to FACTORY_GROK_MAX_BYTES
+# (default 400000) by leaving out the largest files first, and the prompt names what was cut.
 # Exit codes: 2 seat not enabled, 3 grok CLI or jq missing, 4 brief, DIR or a commit unreadable,
 # 5 session did not finish or Grok still called a tool after one resume, 6 the run passed
 # FACTORY_GROK_TIMEOUT seconds (default 540), counted across the resume, 7 the reply has no VERDICT line.
 set -euo pipefail
 
+mode=range
+if [[ "${1:-}" == --files ]]; then mode=files; shift; fi
 brief="${1:-}"
 dir="${2:-}"
 base="${3:-}"
 head="${4:-}"
+files=()
+if [[ "$mode" == files ]]; then
+  base="" head=""
+  shift $(( $# < 2 ? $# : 2 ))
+  files=("$@")
+fi
 
 if [[ "${FACTORY_GROK_SEAT:-}" != "1" ]]; then
   echo "grok-review: seat disabled, set FACTORY_GROK_SEAT=1 to enable" >&2
@@ -40,12 +50,26 @@ if [[ -z "$dir" || ! -d "$dir" ]]; then
   exit 4
 fi
 
-for ref in "$base" "$head"; do
-  if [[ -z "$ref" ]] || ! git -C "$dir" rev-parse --verify --quiet "$ref^{commit}" >/dev/null; then
-    echo "grok-review: not a commit in $dir: ${ref:-<none>} (usage: grok-review.sh BRIEF DIR BASE HEAD)" >&2
+if [[ "$mode" == range ]]; then
+  for ref in "$base" "$head"; do
+    if [[ -z "$ref" ]] || ! git -C "$dir" rev-parse --verify --quiet "$ref^{commit}" >/dev/null; then
+      echo "grok-review: not a commit in $dir: ${ref:-<none>} (usage: grok-review.sh BRIEF DIR BASE HEAD)" >&2
+      exit 4
+    fi
+  done
+else
+  if (( ${#files[@]} == 0 )); then
+    echo "grok-review: no files named (usage: grok-review.sh --files BRIEF DIR FILE...)" >&2
     exit 4
   fi
-done
+  for path in "${files[@]}"; do
+    [[ "$path" == /* ]] && full=$path || full=$dir/$path
+    if [[ ! -f "$full" || ! -r "$full" ]]; then
+      echo "grok-review: file missing or unreadable: $path" >&2
+      exit 4
+    fi
+  done
+fi
 
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
@@ -54,31 +78,56 @@ trap 'rm -rf "$work"' EXIT
 deadline=$(( $(date +%s) + ${FACTORY_GROK_TIMEOUT:-540} ))
 
 cap=${FACTORY_GROK_MAX_BYTES:-400000}
-git -C "$dir" log --oneline "$base..$head" >"$work/log"
-git -C "$dir" diff --no-color --no-ext-diff "$base" "$head" >"$work/diff"
+: >"$work/log"
+: >"$work/diff"
+if [[ "$mode" == range ]]; then
+  git -C "$dir" log --oneline "$base..$head" >"$work/log"
+  git -C "$dir" diff --no-color --no-ext-diff "$base" "$head" >"$work/diff"
+  material="the commits, the diff and the full text at $head of the files changed in $base..$head of the repository at $dir"
+else
+  material="the full text of the files the brief works from, read from $dir"
+fi
 
 {
   echo "You have no tools in this session. You cannot run commands, read files, search, load skills or spawn subagents. Do not try."
-  echo "Everything you may review is in this prompt: the brief, then the commits, the diff and the full text at $head of the files changed in $base..$head of the repository at $dir."
-  echo "Review only that material. Where it cannot settle a point, say what you would need to see instead of guessing."
-  echo "Print the findings as your final reply. End it with one plain line that starts with VERDICT: and gives your verdict in the brief's terms, for example VERDICT: ship with fixes."
+  echo "Everything you may use is in this prompt: the brief, then $material."
+  echo "Use only that material. Where it cannot settle a point, say what you would need to see instead of guessing."
+  echo "Print your answer as your final reply. End it with one plain line that starts with VERDICT: and gives your verdict in the brief's terms, for example VERDICT: ship with fixes."
   echo
   echo "===== BRIEF ====="
   cat "$brief"
-  echo
-  echo "===== COMMITS $base..$head ====="
-  cat "$work/log"
+  if [[ "$mode" == range ]]; then
+    echo
+    echo "===== COMMITS $base..$head ====="
+    cat "$work/log"
+  fi
 } >"$work/head"
 
 omitted=()
 binary=()
 : >"$work/sizes"
-while IFS= read -r -d '' rec; do
-  path=${rec#*$'\t'*$'\t'}
-  if [[ "$rec" == -$'\t'-$'\t'* ]]; then binary+=("$path"); continue; fi
-  size=$(git -C "$dir" cat-file -s "$head:$path" 2>/dev/null) || { binary+=("$path"); continue; }
-  printf '%s\t%s\0' "$size" "$path" >>"$work/sizes"
-done < <(git -C "$dir" diff -z --numstat --no-renames --diff-filter=d "$base" "$head")
+if [[ "$mode" == range ]]; then
+  while IFS= read -r -d '' rec; do
+    path=${rec#*$'\t'*$'\t'}
+    if [[ "$rec" == -$'\t'-$'\t'* ]]; then binary+=("$path"); continue; fi
+    size=$(git -C "$dir" cat-file -s "$head:$path" 2>/dev/null) || { binary+=("$path"); continue; }
+    printf '%s\t%s\0' "$size" "$path" >>"$work/sizes"
+  done < <(git -C "$dir" diff -z --numstat --no-renames --diff-filter=d "$base" "$head")
+else
+  for path in "${files[@]}"; do
+    [[ "$path" == /* ]] && full=$path || full=$dir/$path
+    if [[ -s "$full" ]] && ! LC_ALL=C grep -qI '' "$full"; then binary+=("$path"); continue; fi
+    printf '%s\t%s\0' "$(wc -c <"$full" | tr -d ' ')" "$path" >>"$work/sizes"
+  done
+fi
+
+# Prints one file of the material: the blob at HEAD for a range, the file on disk for --files.
+show_file() {
+  if [[ "$mode" == range ]]; then git -C "$dir" show "$head:$1"
+  elif [[ "$1" == /* ]]; then cat "$1"
+  else cat "$dir/$1"
+  fi
+}
 
 # The 1024 bytes leave room for the left-out list and the closing lines.
 fixed=$(( $(wc -c <"$work/head") + 1024 ))
@@ -103,28 +152,30 @@ done < <(sort -z -n "$work/sizes")
 
 {
   cat "$work/head"
-  echo
-  echo "===== DIFF $base $head ====="
-  (( diff_keep == 0 )) || head -c "$diff_keep" "$work/diff"
-  if (( diff_keep < diff_size )); then
+  if [[ "$mode" == range ]]; then
     echo
-    echo "[diff cut for size after $diff_keep of $diff_size bytes]"
+    echo "===== DIFF $base $head ====="
+    (( diff_keep == 0 )) || head -c "$diff_keep" "$work/diff"
+    if (( diff_keep < diff_size )); then
+      echo
+      echo "[diff cut for size after $diff_keep of $diff_size bytes]"
+    fi
   fi
   for path in ${included[@]+"${included[@]}"}; do
     echo
-    echo "===== FILE $path AT $head ====="
-    git -C "$dir" show "$head:$path"
+    echo "===== FILE $path${head:+ AT $head} ====="
+    show_file "$path"
     echo "===== END FILE $path ====="
   done
   if (( ${#omitted[@]} + ${#binary[@]} > 0 )); then
     echo
     echo "===== LEFT OUT ====="
     for line in ${omitted[@]+"${omitted[@]}"}; do echo "Full text left out to fit the $cap-byte prompt limit, which drops the largest files first: $line"; done
-    for line in ${binary[@]+"${binary[@]}"}; do echo "Binary file or submodule, not shown: $line"; done
+    for line in ${binary[@]+"${binary[@]}"}; do echo "Binary file${head:+ or submodule}, not shown: $line"; done
   fi
   echo
   echo "===== END OF MATERIAL ====="
-  echo "Review the material above as the brief asks, with no tools, and end with the VERDICT: line."
+  echo "Do what the brief asks with the material above, with no tools, and end with the VERDICT: line."
 } >"$work/prompt"
 
 # --tools "" is ignored, so the allowlist names one tool and the deny list removes it along with
@@ -171,7 +222,7 @@ session=$(session_id)
 if [[ "$status" -eq 0 && -n "$calls" && -n "$session" ]]; then
   resumed=1
   echo "grok-review: resume after a tool call: $calls" >&2
-  echo "You called $calls, but this session has no tools and none will run. Review only the material in the first prompt, print your findings, and end with the VERDICT: line." >"$work/retry"
+  echo "You called $calls, but this session has no tools and none will run. Use only the material in the first prompt, print your answer, and end with the VERDICT: line." >"$work/retry"
   run_grok --resume "$session" --prompt-file "$work/retry" || status=$?
   reason=$(stop_reason)
   calls=$(tool_calls)

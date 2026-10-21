@@ -30,9 +30,9 @@ Run the **arena** skill with the design-sketch task and the Phase A grounding ar
 
 Run one runner on each of `factory-reviewer-a`, `factory-reviewer-b` and `factory-reviewer-c`. **Fable seat (opt-in).** Seat A is `factory-reviewer-a`. When the environment sets `FACTORY_FABLE_SEAT=1`, spawn `factory-reviewer-fable` with the same brief in place of `factory-reviewer-a`. If it fails with "requires usage credits", respawn on `factory-reviewer-a` and use it for seat A for the rest of the session. Extra seats that reuse seat A go to `factory-reviewer-a`, never to the Fable agent. Spawn more seats by reusing those agents when the design space is wide.
 
-**Grok seat.** `factory-reviewer-grok` does not run a sketch, even when `FACTORY_GROK_SEAT=1`. Grok has no tools and reviews only a committed `BASE..HEAD` range, so it can neither read the grounding nor write a candidate.
+**Grok runner (opt-in).** When the environment sets `FACTORY_GROK_SEAT=1`, add one more runner on `factory-reviewer-grok`, on top of seats A, B and C, not in place of one. Grok has no tools and reads only the files its brief names. Write the Phase A grounding to a file, and give the brief the repository directory, the grounding file and the smallest set of source files the design must fit. Ask for the candidate package in the reply, ending with a `VERDICT:` line that names its confidence in the shape. Save the reply to that runner's output path yourself. Grok cannot check names or signatures against code it was not sent, so check them against the repo before its candidate becomes a base. If the seat reports itself unavailable, continue with three runners and note the dropout.
 
-Seats A and B run the same model at the same effort and only seat C differs, by model, so weight a concrete structural objection over a majority opinion.
+Unless the Grok runner is active, seats A and B run the same model at the same effort and only seat C differs, by model, so weight a concrete structural objection over a majority opinion.
 
 Design it twice. Require at least two structurally distinct candidates before synthesis, even when the first looks sufficient. This is the **exhaust-the-design-space** principle skill made concrete. Whole-shape alternatives, not point fixes inside one shape.
 
