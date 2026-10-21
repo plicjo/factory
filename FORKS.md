@@ -3,8 +3,8 @@
 This file records every intentional divergence from upstream pstack.
 
 - Upstream is `pstack/` in [cursor/plugins](https://github.com/cursor/plugins).
-- The recorded sync base is `7845807642f9ef234a0ec5b4067fa3f11fd92a85`, the `BASE` in `upstream-log.sh`.
-- The compared snapshot is `7845807642f9ef234a0ec5b4067fa3f11fd92a85`, the upstream head when this file was written.
+- The recorded sync base is `190d28736eff128ec94f502a22c7fe0c4b56cd37`, the `BASE` in `upstream-log.sh`.
+- The compared snapshot is `190d28736eff128ec94f502a22c7fe0c4b56cd37`, the upstream head when this file was written.
 - A file absent from the tables below matches upstream apart from the name substitutions. `poteto-mode` is `factory-mode`, `poteto-agent` is `factory-agent`, and prose says factory instead of poteto.
 - The `deslop` skill is vendored from cursor-team-kit, not pstack. Its license is in `LICENSE-cursor-team-kit`.
 - A PR that changes a ported file, or adds or drops one, updates its row here. The `forks` CI job runs `tools/check-forks.py` and fails on an undeclared divergence. After a sync, bump the snapshot SHA above and rerun it.
@@ -17,6 +17,7 @@ Upstream files not ported. Paths are upstream paths.
 |---|---|
 | `.cursor-plugin/plugin.json` | Cursor plugin manifest. `.claude-plugin/` replaces it. |
 | `plugin.json` | Agent Plugins v1 root manifest. `.claude-plugin/` replaces it. |
+| `docs/harness/claude-code.md` | Maps Cursor names to Claude Code at run time. The skills here are rewritten for Claude Code in place. |
 | `automations/benny/` | Cursor automations for Slack issue reports. Nothing here runs them. |
 | `skills/poteto-help/` | Onboarding help for pstack. The guide covers setup here. |
 | `skills/setup-pstack/` | Wrote a Cursor model rule. Models now live in each agent definition under `agents/`. |
@@ -66,7 +67,7 @@ Ported files with content changes beyond the name substitutions.
 |---|---|
 | `README.md` | Rewritten for Claude Code install, with a fork notice and the sync base. |
 | `docs/guide/` (all 10 chapters and the index) | Rewritten for Claude Code. Setup, model choice, `factory-help`, and Cursor-only automation material are cut. |
-| `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents, the Fable seat and the opt-in Grok seat. Drops the Orchestrate playbook and the Cursor-only triggers. Autonomy creates tickets only on request and leaves the user's own processes and dev data alone. Subagents caps work in flight and reports what runs from the live list. |
+| `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents, the Fable seat and the opt-in Grok seat. Drops the Orchestrate playbook, the Cursor-only triggers, the Cursor mode frontmatter, and the per-spawn effort and speed picking. Autonomy creates tickets only on request and leaves the user's own processes and dev data alone. Subagents caps work in flight and reports what runs from the live list. |
 | `agents/factory-agent.md` | Claude frontmatter for background, model, effort and the preloaded skill. The body names `Agent` spawns instead of `Task`. |
 | `skills/principle-*/SKILL.md` (all 24) | `user-invocable: false` hides them from the slash menu. |
 | `skills/principle-laziness-protocol/SKILL.md` | Adds the reuse rule and widens the trigger to any code change. |
@@ -78,13 +79,15 @@ Ported files with content changes beyond the name substitutions.
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
 | `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, `deslop` by name, and a line on each screenshot saying what it proves. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |
-| `skills/factory-mode/playbooks/autopilot-full.md`, `autopilot-stack.md`, `shipping.md` | Owners are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. Autopilot-full step 4 sizes the review swarm to the change risk. |
+| `skills/factory-mode/playbooks/autopilot-full.md`, `shipping.md` | Owners and verifiers are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. Autopilot-full keeps the trail and child list in uncommitted `decisions.tsv` and `children.tsv`, and step 4 sizes the review swarm to the change risk. |
 | `skills/factory-mode/playbooks/autonomous-run.md` | Uses the Claude Code `/loop` command and `AskUserQuestion`. |
 | `skills/factory-mode/playbooks/authoring-a-skill.md` | Replaces Cursor's `create-skill` with the `skills/<name>/SKILL.md` layout. |
 | `skills/factory-mode/playbooks/babysit.md` | Drops the Cursor built-in babysit note and the Bugbot step. |
 | `skills/factory-mode/playbooks/multi-phase-plan.md` | Plugin-relative paths, `verify-*` skills, worktree lanes, and review-bot wording. |
 | `skills/factory-mode/playbooks/eval.md`, `session-pickup.md` | Reads Claude Code sessions under `~/.claude/projects/`. |
 | `skills/factory-mode/playbooks/worktree-cleanup.md` | Notes that the session-start sweep already removes landed and empty branches and their clean, idle worktrees. |
+| `skills/factory-mode/playbooks/runtime-forensics.md`, `trace-forensics.md`, `skills/figure-it-out/SKILL.md` | Drop upstream's line on picking each subagent's reasoning level and speed, because each agent pins its own effort. The same line is cut from every file in this table. |
+| `skills/ketchup/SKILL.md` | Charts come from any tool, not Cursor's `/visualize`. |
 | `skills/factory-mode/references/bugbot-triage.md` | Names the review bot generically instead of Bugbot. |
 | `skills/factory-mode/scripts/worktree-audit.sh` | Finds sessions under `~/.claude/projects/`. |
 | `skills/factory-mode/scripts/package.json`, `bun.lock` | The package is `factory-mode-tools` and the test script drops `orch`. |
