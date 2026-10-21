@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Fail when a markdown file under skills/, docs/, or agents/ references a
+"""Fail when a markdown file under skills/ or agents/ references a
 repo path that does not exist.
 
 A reference is a relative markdown link target, or a backticked path that
 starts with ./, ../, or one of the repo's directory names. Candidates
-containing glob or placeholder characters are skipped. Each candidate is
+containing glob or placeholder characters are skipped, and so is a bare
+directory name such as `docs/`, which names a kind of folder, not a path. Each candidate is
 resolved against the file's own directory, its skill root, and the repo
 root, and counts as dangling only when none resolve.
 """
@@ -27,7 +28,7 @@ def skill_root(d):
 
 
 bad = []
-for scan in (skills, os.path.join(root, "docs"), os.path.join(root, "agents")):
+for scan in (skills, os.path.join(root, "agents")):
     for dp, _, fs in os.walk(scan):
         for fn in fs:
             if not fn.endswith(".md"):
@@ -44,6 +45,8 @@ for scan in (skills, os.path.join(root, "docs"), os.path.join(root, "agents")):
                     cands += tick.findall(line)
                     for c in cands:
                         c = c.rstrip("/")
+                        if "/" not in c and "." not in c:
+                            continue
                         if any(ch in c for ch in "<>*~${}|"):
                             continue
                         c = c.split(":")[0]

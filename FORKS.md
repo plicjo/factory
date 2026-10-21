@@ -17,9 +17,10 @@ Upstream files not ported. Paths are upstream paths.
 |---|---|
 | `.cursor-plugin/plugin.json` | Cursor plugin manifest. `.claude-plugin/` replaces it. |
 | `plugin.json` | Agent Plugins v1 root manifest. `.claude-plugin/` replaces it. |
+| `docs/guide/` | The 10-chapter guide to pstack. The README, the skills and the agent files cover this fork. |
 | `docs/harness/claude-code.md` | Maps Cursor names to Claude Code at run time. The skills here are rewritten for Claude Code in place. |
 | `automations/benny/` | Cursor automations for Slack issue reports. Nothing here runs them. |
-| `skills/poteto-help/` | Onboarding help for pstack. The guide covers setup here. |
+| `skills/poteto-help/` | Onboarding help for pstack. The README covers setup here. |
 | `skills/setup-pstack/` | Wrote a Cursor model rule. Models now live in each agent definition under `agents/`. |
 | `skills/make-bot-ui/` | Builds UIs for Cursor's automation webhook and Grok Bot, which Claude Code cannot run. |
 | `skills/poteto-mode/playbooks/orchestrate.md` | Coordinator playbook built on Cursor cloud agents and the Cursor dashboard, with 2,819 lines of `orch` store tooling. Autopilot-full, autopilot-stack and multi-phase-plan cover that scale here. Port from upstream head if a program-scale need appears. |
@@ -31,7 +32,7 @@ Files with no upstream counterpart.
 
 | Path | Reason |
 |---|---|
-| `.claude-plugin/` | Claude Code plugin and marketplace manifests. |
+| `.claude-plugin/` | Claude Code plugin manifest. |
 | `agents/factory-code.md` | Standard code delegate with its model and effort pinned. |
 | `agents/factory-hard.md` | Delegate for the hardest changes. |
 | `agents/factory-explorer.md` | Read-only explorer for `how` and `why`. |
@@ -66,7 +67,6 @@ Ported files with content changes beyond the name substitutions.
 | Path | Reason |
 |---|---|
 | `README.md` | Rewritten for Claude Code install, with a fork notice and the sync base. |
-| `docs/guide/` (all 10 chapters and the index) | Rewritten for Claude Code. Setup, model choice, `factory-help`, and Cursor-only automation material are cut. |
 | `skills/factory-mode/SKILL.md` | Adds the sticky rule and the named-skill fallback. Subagents section names the `factory-*` agents, the Fable seat and the opt-in Grok seat. Drops the Orchestrate playbook, the Cursor-only triggers, the Cursor mode frontmatter, and the per-spawn effort and speed picking. Autonomy creates tickets only on request and leaves the user's own processes and dev data alone. Subagents caps work in flight and reports what runs from the live list. |
 | `agents/factory-agent.md` | Claude frontmatter for background, model, effort and the preloaded skill. The body names `Agent` spawns instead of `Task`. |
 | `skills/principle-*/SKILL.md` (all 24) | `user-invocable: false` hides them from the slash menu. |
