@@ -54,7 +54,7 @@ Files with no upstream counterpart.
 | `tools/check-references.py` | Fails CI on dangling markdown references. |
 | `tools/check-forks.py` | Fails CI when the repo diverges from upstream without a row here. |
 | `tools/prune-merged.sh` | Deletes landed and empty local branches and their clean, idle worktrees, with `--dry-run` to preview. |
-| `tools/grok-review.sh` | Gates the opt-in Grok seat on `FACTORY_GROK_SEAT=1`, puts the log, diff and changed files of a `BASE..HEAD` range in the prompt, runs the `grok` CLI with no tools at low effort, resumes once if Grok still calls a tool, stops at a wall-clock limit, and exits nonzero when the session did not finish or the reply has no verdict. |
+| `tools/grok-review.sh` | Gates the opt-in Grok seat on `FACTORY_GROK_SEAT=1`, puts the log, diff and changed files of a `BASE..HEAD` range, or with `--files` a list of files, in the prompt, runs the `grok` CLI with no tools at low effort, resumes once if Grok still calls a tool, stops at a wall-clock limit, and exits nonzero when the session did not finish or the reply has no verdict. |
 | `upstream-log.sh` | Lists upstream commits since the sync base. |
 | `skills/deslop/SKILL.md` | Vendored from cursor-team-kit. Upstream pstack points at that plugin instead. |
 | `LICENSE-cursor-team-kit` | MIT license for the vendored `deslop` skill. |
@@ -75,7 +75,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/principle-test-behavior-not-implementation/SKILL.md` | Adds the framework and real-data rules. |
 | `skills/principle-sequence-verifiable-units/SKILL.md` | Delivery guidance says one commit per PR. |
 | `skills/how/SKILL.md`, `skills/why/SKILL.md`, `skills/swarm/SKILL.md` | Spawns name `factory-explorer`, `factory-synthesizer` or `factory-worker` instead of model lines. |
-| `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Arena and interrogate add the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1` and the subject is one committed range. Architect and reflect name why the seat does not run there. |
+| `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Architect, arena and interrogate add the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1` and the subject is one committed range or a set of text files. Reflect names why the seat does not run there. |
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
 | `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, `deslop` by name, and a line on each screenshot saying what it proves. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |

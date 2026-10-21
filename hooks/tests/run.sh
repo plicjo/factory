@@ -316,6 +316,36 @@ else
 	ko 'grok review exits 4 without a BASE and HEAD range'
 fi
 
+streams '{"type":"text","data":"sketch\nVERDICT: candidate ready"}'"
+$done_turn"
+printf 'grounding note\n' >"$T/grounding.md"
+printf 'uncommitted\n' >"$G/draft.txt"
+grokfiles() { PATH="$fakebin:$PATH" FACTORY_GROK_SEAT=1 bash "$H/../tools/grok-review.sh" --files "$T/brief" "$G" "$@" 2>"$T/err"; }
+out=$(grokfiles small.txt draft.txt "$T/grounding.md" bin.dat); code=$?
+if [ "$code" -eq 0 ] && [ "$out" = "sketch
+VERDICT: candidate ready" ] && grep -qx 'brief' "$T/sent" &&
+	grep -Fqx '===== FILE small.txt =====' "$T/sent" && grep -qx 'new small' "$T/sent" &&
+	grep -qx 'uncommitted' "$T/sent" && grep -Fqx "===== FILE $T/grounding.md =====" "$T/sent" && grep -qx 'grounding note' "$T/sent" &&
+	grep -qx 'Binary file, not shown: bin.dat' "$T/sent" && ! grep -q '===== COMMITS\|===== DIFF' "$T/sent"; then
+	ok 'grok files sends the brief and each named file from disk, relative or absolute, with no commits or diff'
+else
+	ko "grok files sends the brief and each named file from disk, relative or absolute, with no commits or diff (exit $code)"
+fi
+
+FACTORY_GROK_MAX_BYTES=4000 grokfiles small.txt big.txt >/dev/null
+if grep -Fqx '===== FILE small.txt =====' "$T/sent" && grep -q "largest files first: big.txt ($bigsize bytes)$" "$T/sent"; then
+	ok 'grok files leaves out the largest file over the size cap and names the cut'
+else
+	ko 'grok files leaves out the largest file over the size cap and names the cut'
+fi
+
+out=$(grokfiles); code=$?
+if [ "$code" -eq 4 ] && grep -q 'usage: grok-review.sh --files BRIEF DIR FILE' "$T/err"; then ok 'grok files exits 4 when no file is named'; else ko 'grok files exits 4 when no file is named'; fi
+
+out=$(grokfiles small.txt nope.txt); code=$?
+if [ "$code" -eq 4 ] && grep -q 'file missing or unreadable: nope.txt' "$T/err"; then ok 'grok files exits 4 on a missing file'; else ko 'grok files exits 4 on a missing file'; fi
+rm "$G/draft.txt"
+
 printf '#!/bin/sh\nexec sleep 30\n' >"$fakebin/grok" && chmod +x "$fakebin/grok"
 start=$(date +%s)
 FACTORY_GROK_TIMEOUT=1 grokreview >/dev/null; code=$?

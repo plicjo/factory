@@ -34,7 +34,7 @@ In each project, run `/create-verification-skill` once so agents can launch and 
 
 | Flag | Effect |
 |---|---|
-| `FACTORY_GROK_SEAT=1` | Adds the cross-family Grok review seat. Needs the `grok` CLI, installed and authenticated. |
+| `FACTORY_GROK_SEAT=1` | Adds the cross-family Grok seat to review panels, architect sketches and text arenas. Needs the `grok` CLI, installed and authenticated. |
 | `FACTORY_GROK_EFFORT`, `FACTORY_GROK_TIMEOUT` | Grok reasoning effort and time limit in seconds. Keep the timeout under 600. |
 | `FACTORY_FABLE_SEAT=1` | Runs review seat A on Fable, with a fallback to `factory-reviewer-a`. |
 | `FACTORY_ALLOW_LONG_FOREGROUND=1` | Allows Bash calls over two minutes in the foreground. |
