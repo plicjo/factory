@@ -1,7 +1,7 @@
 # factory
 
 My agent workflow stack, packaged as a Claude Code plugin. Forked from [pstack](https://github.com/cursor/plugins/tree/main/pstack)
-by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.28 (cursor/plugins@190d287, the `BASE` in `upstream-log.sh`).
+by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.34 (cursor/plugins@519d36a, the `BASE` in `upstream-log.sh`).
 Diverged since; not a mirror. [FORKS.md](FORKS.md) records every intentional divergence.
 The `deslop` skill comes from cursor-team-kit in the same repo, also MIT licensed (`LICENSE-cursor-team-kit`).
 
