@@ -32,6 +32,7 @@ Files with no upstream counterpart.
 
 | Path | Reason |
 |---|---|
+| `CLAUDE.md` | Repo rules for sessions working on factory. Not loaded by the plugin. |
 | `.claude-plugin/` | Claude Code plugin and marketplace manifests. The marketplace entry exists for cloud sessions, which can't load a checkout. |
 | `agents/factory-code.md` | Standard code delegate with its model and effort pinned. |
 | `agents/factory-hard.md` | Delegate for the hardest changes. |
@@ -77,13 +78,13 @@ Ported files with content changes beyond the name substitutions.
 | `skills/how/SKILL.md`, `skills/why/SKILL.md`, `skills/swarm/SKILL.md` | Spawns name `factory-explorer`, `factory-synthesizer` or `factory-worker` instead of model lines. |
 | `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Architect, arena and interrogate add the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1` and the subject is one committed range or a set of text files. Reflect names why the seat does not run there, and copies a cached skill into `.claude/skills/` rather than `.cursor/skills/`. |
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
-| `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, `deslop` by name, and a line on each screenshot saying what it proves. |
+| `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, `deslop` by name, and a line on each screenshot saying what it proves. **Forge** is the one forge rule the other playbooks point to, and picks the GitHub MCP tools in a Claude Code cloud session. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |
-| `skills/factory-mode/playbooks/autopilot-full.md`, `shipping.md` | Owners and verifiers are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. Autopilot-full keeps the trail and child list in uncommitted `decisions.tsv` and `children.tsv`, and step 4 sizes the review swarm to the change risk. |
+| `skills/factory-mode/playbooks/autopilot-full.md`, `shipping.md` | Owners and verifiers are `factory-worker` agents in git worktrees. Control skills become `verify-*` skills. Autopilot-full keeps the trail and child list in uncommitted `decisions.tsv` and `children.tsv`, and step 4 sizes the review swarm to the change risk. Both resolve the forge through opening-a-pr's **Forge**, and shipping names the GitHub MCP stand-ins for its `gh` commands. |
 | `skills/factory-mode/playbooks/autonomous-run.md` | Uses the Claude Code `/loop` command and `AskUserQuestion`. |
 | `skills/factory-mode/playbooks/authoring-a-skill.md` | Replaces Cursor's `create-skill` with the `skills/<name>/SKILL.md` layout. |
-| `skills/factory-mode/playbooks/babysit.md` | Drops the Cursor built-in babysit note and the Bugbot step. |
-| `skills/factory-mode/playbooks/multi-phase-plan.md` | Plugin-relative paths, `verify-*` skills, worktree lanes, and review-bot wording. |
+| `skills/factory-mode/playbooks/babysit.md` | Drops the Cursor built-in babysit note and the Bugbot step. Resolves the forge through opening-a-pr's **Forge**. |
+| `skills/factory-mode/playbooks/multi-phase-plan.md` | Plugin-relative paths, `verify-*` skills, worktree lanes, and review-bot wording. Resolves the forge through opening-a-pr's **Forge**. |
 | `skills/factory-mode/playbooks/eval.md`, `session-pickup.md` | Reads Claude Code sessions under `~/.claude/projects/`. |
 | `skills/factory-mode/playbooks/worktree-cleanup.md` | Notes that the session-start sweep already removes landed and empty branches and their clean, idle worktrees. |
 | `skills/factory-mode/playbooks/runtime-forensics.md`, `trace-forensics.md`, `skills/figure-it-out/SKILL.md` | Drop upstream's line on picking each subagent's reasoning level and speed, because each agent pins its own effort. The same line is cut from every file in this table. |
