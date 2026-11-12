@@ -1,0 +1,8 @@
+{
+  "name": "factory",
+  "description": "Joshua Plicque's agent workflow stack, forked from pstack",
+  "owner": { "name": "Joshua Plicque" },
+  "plugins": [
+    { "name": "factory", "source": "./", "description": "my agent workflow stack" }
+  ]
+}
