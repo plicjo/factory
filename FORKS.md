@@ -32,7 +32,7 @@ Files with no upstream counterpart.
 
 | Path | Reason |
 |---|---|
-| `.claude-plugin/` | Claude Code plugin manifest. |
+| `.claude-plugin/` | Claude Code plugin and marketplace manifests. The marketplace entry exists for cloud sessions, which can't load a checkout. |
 | `agents/factory-code.md` | Standard code delegate with its model and effort pinned. |
 | `agents/factory-hard.md` | Delegate for the hardest changes. |
 | `agents/factory-explorer.md` | Read-only explorer for `how` and `why`. |

@@ -5,7 +5,7 @@ by Lauren Tan (poteto), MIT licensed, last synced at pstack 0.15.34 (cursor/plug
 Diverged since; not a mirror. [FORKS.md](FORKS.md) records every intentional divergence.
 The `deslop` skill comes from cursor-team-kit in the same repo, also MIT licensed (`LICENSE-cursor-team-kit`).
 
-This is a personal setup, loaded from a checkout. It has no marketplace entry and no versions. For pstack itself in Claude Code, install upstream's `pstack@cursor-plugins`.
+This is a personal setup, loaded from a checkout locally and from its marketplace entry in cloud sessions. It has no versions. For pstack itself in Claude Code, install upstream's `pstack@cursor-plugins`.
 
 ## Install
 
@@ -13,6 +13,15 @@ This is a personal setup, loaded from a checkout. It has no marketplace entry an
     claude --plugin-dir ~/projects/factory
 
 Edits to skills, agents and hooks take effect the next time `claude` starts with that flag. Wrap the command in a shell alias per profile, with that profile's `CLAUDE_CONFIG_DIR` and environment flags.
+
+### Cloud sessions
+
+A cloud session at claude.ai/code takes no `--plugin-dir`, and it ignores plugins installed on your machine and the ones a repo's `.claude/settings.json` turns on. Install factory from the environment's setup script instead:
+
+    claude plugin marketplace add plicjo/factory
+    claude plugin install factory@factory
+
+The setup script is saved with the environment and runs before each new session, so every session gets main's head. `~/.claude` doesn't carry over either, so write a user `CLAUDE.md` from the same script if you rely on one. Leave `FACTORY_GROK_SEAT` unset there, since the VM has no `grok` CLI.
 
 ## Quick start
 
