@@ -3,8 +3,8 @@
 This file records every intentional divergence from upstream pstack.
 
 - Upstream is `pstack/` in [cursor/plugins](https://github.com/cursor/plugins).
-- The recorded sync base is `519d36aa98955bf680db01bcde5fdfba686dc901`, the `BASE` in `upstream-log.sh`.
-- The compared snapshot is `519d36aa98955bf680db01bcde5fdfba686dc901`, the upstream head when this file was written.
+- The recorded sync base is `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, the `BASE` in `upstream-log.sh`.
+- The compared snapshot is `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, the upstream head when this file was written.
 - A file absent from the tables below matches upstream apart from the name substitutions. `poteto-mode` is `factory-mode`, `poteto-agent` is `factory-agent`, and prose says factory instead of poteto.
 - The `deslop` skill is vendored from cursor-team-kit, not pstack. Its license is in `LICENSE-cursor-team-kit`.
 - A PR that changes a ported file, or adds or drops one, updates its row here. The `forks` CI job runs `tools/check-forks.py` and fails on an undeclared divergence. After a sync, bump the snapshot SHA above and rerun it.
@@ -23,8 +23,7 @@ Upstream files not ported. Paths are upstream paths.
 | `skills/poteto-help/` | Onboarding help for pstack. The README covers setup here. |
 | `skills/setup-pstack/` | Wrote a Cursor model rule. Models now live in each agent definition under `agents/`. |
 | `skills/make-bot-ui/` | Builds UIs for Cursor's automation webhook and Grok Bot, which Claude Code cannot run. |
-| `skills/poteto-mode/playbooks/orchestrate.md` | Coordinator playbook built on Cursor cloud agents and the Cursor dashboard, with 2,819 lines of `orch` store tooling. Autopilot-full, autopilot-stack and multi-phase-plan cover that scale here. Port from upstream head if a program-scale need appears. |
-| `skills/poteto-mode/scripts/orch/` | The orchestrate playbook's store tooling. Dropped with it. |
+| `skills/poteto-mode/playbooks/orchestrate.md` | Coordinator playbook built on Cursor cloud agents and the Cursor dashboard,. Autopilot-full, autopilot-stack and multi-phase-plan cover that scale here. Port from upstream head if a program-scale need appears. |
 
 ## Added
 
@@ -76,7 +75,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/principle-test-behavior-not-implementation/SKILL.md` | Adds the framework and real-data rules. |
 | `skills/principle-sequence-verifiable-units/SKILL.md` | Delivery guidance says one commit per PR. |
 | `skills/how/SKILL.md`, `skills/why/SKILL.md`, `skills/swarm/SKILL.md` | Spawns name `factory-explorer`, `factory-synthesizer` or `factory-worker` instead of model lines. |
-| `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Architect, arena and interrogate add the opt-in Grok seat on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1` and the subject is one committed range or a set of text files. Reflect names why the seat does not run there, and copies a cached skill into `.claude/skills/` rather than `.cursor/skills/`. |
+| `skills/architect/SKILL.md`, `skills/arena/SKILL.md`, `skills/interrogate/SKILL.md`, `skills/reflect/SKILL.md` | Panel seats run on `factory-reviewer-a`, `-b` and `-c`. The text says same-vendor agreement is weaker evidence. Architect, arena and interrogate add the opt-in Grok seat, which in interrogate proposes the command that would prove each finding for the lead to run, on `factory-reviewer-grok` when `FACTORY_GROK_SEAT=1` and the subject is one committed range or a set of text files. Reflect names why the seat does not run there, and copies a cached skill into `.claude/skills/` rather than `.cursor/skills/`. |
 | `skills/reflect/references/` (`divergent-reviewer.md`, `judgment-reviewer.md`, `synthesizer.md`, `tooling-reviewer.md`) | Claude skill paths, and the `authoring-a-skill` playbook replaces `create-skill`. |
 | `skills/factory-mode/playbooks/opening-a-pr.md` | One PR is one commit, force-push with lease, capitalized `Type(scope): Subject` titles, `deslop` by name, and a line on each screenshot saying what it proves. **Forge** is the one forge rule the other playbooks point to, and picks the GitHub MCP tools in a Claude Code cloud session. |
 | `skills/factory-mode/playbooks/bug-fix.md`, `feature.md`, `hillclimb.md`, `perf-issue.md`, `refactoring.md` | Delegation goes to `factory-code` or `factory-hard`. Feature, Hillclimb and Refactoring squash to one commit. |
@@ -91,7 +90,7 @@ Ported files with content changes beyond the name substitutions.
 | `skills/ketchup/SKILL.md` | Charts come from any tool, not Cursor's `/visualize`. |
 | `skills/factory-mode/references/bugbot-triage.md` | Names the review bot generically instead of Bugbot. |
 | `skills/factory-mode/scripts/worktree-audit.sh` | Finds sessions under `~/.claude/projects/`. |
-| `skills/factory-mode/scripts/package.json`, `bun.lock` | The package is `factory-mode-tools` and the test script drops `orch`. |
+| `skills/factory-mode/scripts/package.json`, `bun.lock` | The package is `factory-mode-tools`. |
 | `skills/recall/SKILL.md`, `skills/show-me-your-work/SKILL.md` | Read Claude Code sessions, and `recall` fans out to `factory-explorer`. The trail reviewer stays on Anthropic models. |
 | `skills/automate-me/SKILL.md` | Claude paths, `AskUserQuestion`, and the authoring playbook instead of `create-skill`. |
 | `skills/no-comments/SKILL.md` | Spawns `factory:comment-sicko` through the `Agent` tool. |
